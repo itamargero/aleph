@@ -1,0 +1,152 @@
+/* ============================================================
+   HEBREW HEROES — visual system
+   A bright cartoon-adventure world for kids learning Hebrew.
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Rubik:wght@400;500;700;900&display=swap');
+
+:root {
+  /* --- core palette: sky-to-meadow adventure --- */
+  --sky-1: #8fd6ff;
+  --sky-2: #bdeaff;
+  --meadow-1: #6ee7a8;
+  --meadow-2: #34c87f;
+  --sun: #ffce4a;
+  --sun-deep: #f7a823;
+  --coral: #ff7a8a;
+  --coral-deep: #ef4f66;
+  --grape: #a98bff;
+  --grape-deep: #7c5cf0;
+  --berry: #ff8fd0;
+
+  /* --- surfaces --- */
+  --cream: #fffaf0;
+  --card: #ffffff;
+  --paper: #fff6e3;
+
+  /* --- ink --- */
+  --ink: #38322c;        /* warm near-black for text */
+  --ink-soft: #7a7066;
+  --ink-faint: #b7ad9f;
+
+  /* --- semantic --- */
+  --correct: #2fbf71;
+  --correct-glow: #8df5b8;
+  --gold: #ffc23c;
+
+  /* --- type --- */
+  --font-ui: 'Fredoka', system-ui, sans-serif;
+  --font-he: 'Rubik', system-ui, sans-serif;
+
+  /* --- shape --- */
+  --r-sm: 14px;
+  --r-md: 22px;
+  --r-lg: 34px;
+  --r-xl: 48px;
+
+  /* --- chunky cartoon shadows (bottom-heavy, like soft 3D) --- */
+  --pop: 0 8px 0 rgba(0,0,0,0.10);
+  --pop-lg: 0 12px 0 rgba(0,0,0,0.12);
+  --soft: 0 10px 30px rgba(56,50,44,0.14);
+  --soft-lg: 0 24px 60px rgba(56,50,44,0.20);
+}
+
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+html, body {
+  margin: 0;
+  height: 100%;
+  font-family: var(--font-ui);
+  color: var(--ink);
+  overscroll-behavior: none;
+}
+
+body {
+  background: #2a2440;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+/* The fixed-size stage: tablet landscape, scaled to fit viewport */
+#stage-wrap {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+#stage {
+  width: 1280px;
+  height: 800px;
+  position: relative;
+  overflow: hidden;
+  border-radius: 28px;
+  background: var(--cream);
+  box-shadow: 0 40px 120px rgba(0,0,0,0.5);
+  transform-origin: center center;
+}
+
+button { font-family: inherit; cursor: pointer; border: none; background: none; color: inherit; }
+
+/* Hebrew text helper */
+.he { font-family: var(--font-he); direction: rtl; unicode-bidi: isolate; font-weight: 700; }
+
+/* The chunky candy button — primary interactive element */
+.btn {
+  font-family: var(--font-ui);
+  font-weight: 600;
+  border-radius: var(--r-md);
+  padding: 16px 30px;
+  font-size: 22px;
+  color: #fff;
+  background: var(--grape-deep);
+  box-shadow: 0 7px 0 rgba(0,0,0,0.18);
+  transition: transform .08s ease, box-shadow .08s ease, filter .15s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  user-select: none;
+  white-space: nowrap;
+}
+.btn:active { transform: translateY(5px); box-shadow: 0 2px 0 rgba(0,0,0,0.18); }
+.btn.go    { background: linear-gradient(180deg, var(--meadow-1), var(--meadow-2)); }
+.btn.sun   { background: linear-gradient(180deg, var(--sun), var(--sun-deep)); color: var(--ink); }
+.btn.coral { background: linear-gradient(180deg, var(--coral), var(--coral-deep)); }
+.btn.grape { background: linear-gradient(180deg, var(--grape), var(--grape-deep)); }
+.btn.ghost { background: #fff; color: var(--ink); box-shadow: var(--pop); }
+
+/* round icon button */
+.icon-btn {
+  width: 60px; height: 60px; border-radius: 50%;
+  background: #fff; box-shadow: var(--pop);
+  display: grid; place-items: center;
+  transition: transform .08s ease, box-shadow .08s ease;
+}
+.icon-btn:active { transform: translateY(4px); box-shadow: 0 4px 0 rgba(0,0,0,0.10); }
+
+/* scrollbars hidden inside stage */
+#stage ::-webkit-scrollbar { display: none; }
+
+/* keyframes */
+@keyframes pop-in { 0%{transform:scale(.6)} 70%{transform:scale(1.08)} 100%{transform:scale(1)} }
+@keyframes wiggle { 0%,100%{transform:translateX(0) rotate(0)} 20%{transform:translateX(-8px) rotate(-3deg)} 40%{transform:translateX(8px) rotate(3deg)} 60%{transform:translateX(-6px) rotate(-2deg)} 80%{transform:translateX(6px) rotate(2deg)} }
+@keyframes bob { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-12px)} }
+@keyframes float-cloud { 0%{transform:translateX(0)} 100%{transform:translateX(40px)} }
+@keyframes glow-pulse { 0%,100%{box-shadow:0 0 0 0 rgba(255,194,60,.0)} 50%{box-shadow:0 0 0 14px rgba(255,194,60,.35)} }
+@keyframes spin-slow { 100%{transform:rotate(360deg)} }
+@keyframes rise { 0%{transform:translateY(20px);opacity:0} 100%{transform:translateY(0);opacity:1} }
+@keyframes star-fill { 0%{transform:scale(.5) rotate(-30deg)} 60%{transform:scale(1.3) rotate(8deg)} 100%{transform:scale(1) rotate(0)} }
+@keyframes chest-shake { 0%,100%{transform:rotate(0)} 25%{transform:rotate(-5deg)} 75%{transform:rotate(5deg)} }
+
+.bob { animation: bob 3s ease-in-out infinite; }
+.wiggle { animation: wiggle .5s ease; }
+.pop-in { animation: pop-in .4s cubic-bezier(.2,1.4,.5,1) both; }
+
+/* reduced motion */
+.reduce-motion *, .reduce-motion *::before, .reduce-motion *::after {
+  animation-duration: .001s !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: .05s !important;
+}
