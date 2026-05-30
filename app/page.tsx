@@ -1,6 +1,7 @@
-// The root path is rewritten to /Hebrew%20Heroes.html in next.config.ts.
-// This page exists only so the App Router has a valid root entry; it should
-// never render in production because the rewrite intercepts the request first.
+import { redirect } from "next/navigation";
+
+// The interactive Hebrew Heroes prototype is a static HTML page served from
+// public/. Redirect the root to it so the Next.js shell stays minimal.
 export default function Home() {
-  return null;
+  redirect("/hebrew-heroes.html");
 }
