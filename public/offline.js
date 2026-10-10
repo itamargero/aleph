@@ -67,6 +67,15 @@
       window.addEventListener('hh-offline', finish);
     });
   }
+  async function withDeadline(operation, milliseconds, errorMessage) {
+    let timer;
+    try {
+      return await Promise.race([
+        operation,
+        new Promise((_, reject) => { timer = setTimeout(() => reject(new Error(errorMessage)), milliseconds); }),
+      ]);
+    } finally { clearTimeout(timer); }
+  }
   window.prepareOffline = () => {
     if (preparing) return preparing;
     preparing = (async () => {
@@ -82,11 +91,15 @@
           navigator.storage.persist().catch(() => false);
         }
         const online = navigator.onLine !== false;
-        // An offline cold launch already has an installed worker. Looking it up
-        // avoids requesting sw.js (or an update) while the iPad has no connection.
-        registration = online
-          ? await navigator.serviceWorker.register('/sw.js', { scope: '/', updateViaCache: 'none' })
-          : await navigator.serviceWorker.getRegistration('/');
+        // Re-registering an already installed worker can stall in WebKit.
+        // Look it up first on every launch, then verify its saved assets directly.
+        const existingRegistration = await withDeadline(navigator.serviceWorker.getRegistration('/'), 10000,
+          'Offline storage is not responding. Tap retry to check it again.');
+        registration = existingRegistration;
+        if (!registration && online) {
+          registration = await withDeadline(navigator.serviceWorker.register('/sw.js', { scope: '/', updateViaCache: 'none' }), 20000,
+            'Offline setup is taking too long. Stay on Wi-Fi and tap retry.');
+        }
         if (!registration) throw new Error('Visit this game on Wi-Fi first and wait for the airplane checkmark.');
         if (!observedRegistrations.has(registration)) {
           observedRegistrations.add(registration);
@@ -98,7 +111,7 @@
         observe(registration.active, online && !registration.installing && !registration.waiting ? 'HH_PREPARE' : 'HH_STATUS');
         // A new version downloads in the background and waits for this game to close.
         // We deliberately never send skipWaiting or reload a child mid-lesson.
-        if (online) registration.update().catch(() => { /* Installed assets continue working without Wi-Fi. */ });
+        if (online && existingRegistration) registration.update().catch(() => { /* Installed assets continue working without Wi-Fi. */ });
         return await completion();
       } catch (error) {
         publish({ status: 'error', error: error.message || 'Offline download failed. Connect to Wi-Fi and tap retry.' });
