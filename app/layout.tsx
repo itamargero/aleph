@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Hebrew Heroes",
-  description: "Learn Hebrew through bite-sized exercises.",
+  description: "Listen, match pictures, and learn Hebrew through an offline adventure.",
+  icons: { icon: "/icons/icon-192.png", apple: "/icons/icon-192.png" },
 };
 
 export default function RootLayout({
@@ -11,7 +12,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="he">
       <body>{children}</body>
     </html>
   );

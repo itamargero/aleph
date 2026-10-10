@@ -1,34 +1,42 @@
 # Aleph — Hebrew Heroes
 
-A Hebrew-learning interactive prototype, served as a Next.js app on Vercel.
+A Hebrew adventure for children who are learning their letters. Pictures, recorded Hebrew, guided letter and sentence building, and a sticker collection help children play without reading English.
 
-## How it works
+All eight worlds and 25 lessons are available from the start. The big play button recommends the next unfinished lesson; children can also choose any world and lesson themselves.
 
-The interactive app lives in `public/` as a static HTML page (`Hebrew Heroes.html`) plus its JSX/CSS/data files. The JSX is compiled in-browser via `@babel/standalone`, so no build step is required for the prototype itself.
+## Play offline on an iPad
 
-Next.js wraps it so the project is one-click deployable on Vercel:
+1. Open the production site in Safari while connected to Wi-Fi.
+2. Keep it open until the airplane badge shows **Ready for airplane**. All worlds, Hebrew recordings, fonts, and game code are downloaded together.
+3. Use **Share → Add to Home Screen**. Open the new icon while online and wait for its green airplane check too, since Safari and the installed app can have separate storage.
+4. Switch on airplane mode, reopen the game from that icon, and tap a speaker before your trip.
 
-- `next.config.ts` rewrites `/` → `/Hebrew%20Heroes.html`
-- All design assets live under `public/` and are served at the site root
-- `app/page.tsx` is a no-op placeholder; the rewrite intercepts the request before it renders
+Tap a play button to enable sound on Safari. Progress is saved on the same device. Clearing website data removes the download and saved stars. Parent settings include download retry, sound and movement controls, and a guarded progress reset.
 
-## Local development
+## Development
 
-```bash
-npm install
+```sh
+npm ci
 npm run dev
 ```
 
-Visit http://localhost:3000.
+The app source remains in `public/` and is compiled into a local production React bundle by `scripts/build-offline.mjs`. No CDN scripts, browser Babel compilation, external fonts, or speech service is needed at runtime. The Next.js App Router redirects `/` to `/hebrew-heroes.html`; the service worker serves the cached game for both URLs offline.
 
-## Deployment
-
-Push to `main`. Vercel auto-detects the Next.js preset.
-
-## Layout
-
+```sh
+npm test
+npm run lint
+npm run typecheck
+npm run build
+npm start
 ```
-app/                  # Next.js App Router shell (layout + no-op page)
-public/               # Hebrew Heroes prototype (HTML, JSX, CSS, data)
-design-reference/     # Original screenshots and source zip (reference only)
+
+The build hashes the complete runtime resource list and generates a service worker. A new worker activates when the previous app is closed, avoiding changes in the middle of a lesson. The old complete cache remains available if a new download fails. Offline readiness is checked against the complete resource list.
+
+Hebrew recordings are committed assets so Vercel builds require no speech service. After changing spoken curriculum content, regenerate them on macOS with the installed Hebrew Carmit voice and ffmpeg:
+
+```sh
+npm run audio:generate
+npm run build
 ```
+
+Production deploys through the GitHub integration when reviewed changes merge into `main`.

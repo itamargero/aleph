@@ -1,34 +1,136 @@
 /* ============================================================
-   HEBREW HEROES — effects: speech, sound chimes, confetti
-   Exposes window.speakHe, window.chime, window.Confetti, window.SoundCtx
+   HEBREW HEROES — bundled Hebrew audio, sound chimes and confetti.
+   Voice files are generated before deployment; iPad never needs a downloaded voice.
    ============================================================ */
 
-// ---------- global sound settings (read by tweaks too) ----------
+// ---------- global sound settings ----------
 window.HH_SOUND = { sfx: true, voice: true };
 
-// ---------- Hebrew speech ----------
-let _voices = [];
-function loadVoices() { _voices = window.speechSynthesis ? window.speechSynthesis.getVoices() : []; }
-if (window.speechSynthesis) {
-  loadVoices();
-  window.speechSynthesis.onvoiceschanged = loadVoices;
+// A persistent AudioContext, resumed directly inside a tap, lets subsequent
+// instructions play on iOS. Fetch/decode happen only after this synchronous unlock.
+let _ac = null;
+let _resumeAudio = Promise.resolve(false);
+let _voiceManifest = null;
+let _voiceGeneration = 0;
+let _voiceSource = null;
+let _finishVoice = null;
+const _decodedVoice = new Map();
+window.HH_AUDIO = { status: 'locked', error: '', text: '' };
+
+function audioState(status, error = '', text = '') {
+  window.HH_AUDIO = { status, error, text };
+  window.dispatchEvent(new CustomEvent('hh-audio', { detail: window.HH_AUDIO }));
 }
-function speakHe(text) {
-  if (!window.HH_SOUND.voice || !window.speechSynthesis || !text) return;
+function ac() {
+  if (!_ac) {
+    try {
+      const Context = window.AudioContext || window.webkitAudioContext;
+      if (!Context) throw new Error('Audio playback is not available in this browser.');
+      _ac = new Context();
+    } catch (error) { audioState('error', error.message); }
+  }
+  return _ac;
+}
+function unlockAudio() {
+  const context = ac();
+  if (!context) return Promise.resolve(false);
+  // Call resume and start a silent frame before any await or network request.
   try {
-    window.speechSynthesis.cancel();
-    const u = new SpeechSynthesisUtterance(text);
-    u.lang = 'he-IL';
-    u.rate = 0.85;
-    const hv = _voices.find(v => /he|iw/i.test(v.lang));
-    if (hv) u.voice = hv;
-    window.speechSynthesis.speak(u);
-  } catch (e) {}
+    const resume = context.state === 'running' ? Promise.resolve() : context.resume();
+    const silent = context.createBufferSource();
+    silent.buffer = context.createBuffer(1, 1, context.sampleRate);
+    silent.connect(context.destination);
+    silent.start();
+    _resumeAudio = Promise.resolve(resume).then(() => {
+      if (context.state !== 'running') {
+        audioState('locked', 'Tap the speaker to turn on sound.');
+        return false;
+      }
+      if (!['playing', 'loading'].includes(window.HH_AUDIO.status)) audioState('ready');
+      return true;
+    }).catch(error => { audioState('error', error.message); return false; });
+    return _resumeAudio;
+  } catch (error) { audioState('error', error.message); return Promise.resolve(false); }
 }
+function stopVoice() {
+  _voiceGeneration += 1;
+  if (_voiceSource) {
+    _voiceSource.onended = null;
+    try { _voiceSource.stop(); } catch (_) { /* Source may have already ended. */ }
+    _voiceSource = null;
+  }
+  if (_finishVoice) { _finishVoice(false); _finishVoice = null; }
+  if (['playing', 'loading'].includes(window.HH_AUDIO.status)) audioState(_ac?.state === 'running' ? 'ready' : 'locked');
+}
+function normalizedSpeech(text) { return String(text || '').normalize('NFC').trim().replace(/\s+/g, ' '); }
+async function fetchVoiceAsset(url) {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 15000);
+  try {
+    const response = await fetch(url, { signal: controller.signal });
+    if (!response.ok) throw new Error(`Audio file could not load (${response.status}).`);
+    return response;
+  } finally { clearTimeout(timeout); }
+}
+async function loadVoiceManifest() {
+  if (!_voiceManifest) {
+    _voiceManifest = fetchVoiceAsset('/audio/manifest.json').then(response => response.json()).catch(error => {
+      _voiceManifest = null;
+      throw error;
+    });
+  }
+  return _voiceManifest;
+}
+async function playBundledVoice(text, prompt = false) {
+  stopVoice();
+  const generation = _voiceGeneration;
+  if (!window.HH_SOUND.voice) { audioState('muted'); return false; }
+  const context = ac();
+  if (!context) return false;
+  await _resumeAudio;
+  if (generation !== _voiceGeneration) return false;
+  if (context.state !== 'running') {
+    audioState('locked', 'Tap the speaker to turn on sound.', text);
+    return false;
+  }
+  audioState('loading', '', text);
+  try {
+    const manifest = await loadVoiceManifest();
+    const record = prompt ? manifest.prompts[text] : manifest.entries[normalizedSpeech(text)];
+    if (!record) throw new Error('This recording is missing. Connect to the internet and retry the offline download.');
+    let buffer = _decodedVoice.get(record.url);
+    if (!buffer) {
+      const response = await fetchVoiceAsset(record.url);
+      buffer = await context.decodeAudioData(await response.arrayBuffer());
+      _decodedVoice.set(record.url, buffer);
+    }
+    if (generation !== _voiceGeneration) return false;
+    if (context.state !== 'running') throw new Error('Tap the speaker to resume sound.');
+    return await new Promise(resolve => {
+      const source = context.createBufferSource();
+      source.buffer = buffer;
+      source.connect(context.destination);
+      _voiceSource = source;
+      _finishVoice = resolve;
+      source.onended = () => {
+        if (generation !== _voiceGeneration) return;
+        _voiceSource = null;
+        _finishVoice = null;
+        audioState('ready');
+        resolve(true);
+      };
+      audioState('playing', '', record.text);
+      source.start();
+    });
+  } catch (error) {
+    if (generation === _voiceGeneration) audioState('error', error.message || 'Sound could not play. Tap the speaker to try again.', text);
+    return false;
+  }
+}
+function speakHe(text) { return playBundledVoice(normalizedSpeech(text)); }
+function playPrompt(key) { return playBundledVoice(key, true); }
 
 // ---------- WebAudio chimes ----------
-let _ac = null;
-function ac() { if (!_ac) { try { _ac = new (window.AudioContext || window.webkitAudioContext)(); } catch(e){} } return _ac; }
 function tone(freq, t0, dur, type = 'sine', gain = 0.18) {
   const c = ac(); if (!c) return;
   const o = c.createOscillator(), g = c.createGain();
@@ -43,7 +145,7 @@ function tone(freq, t0, dur, type = 'sine', gain = 0.18) {
 function chime(kind) {
   if (!window.HH_SOUND.sfx) return;
   const c = ac(); if (!c) return;
-  if (c.state === 'suspended') c.resume();
+  if (c.state === 'suspended') unlockAudio();
   if (kind === 'correct') { tone(660,0,.14,'triangle'); tone(880,.10,.18,'triangle'); tone(1175,.20,.30,'triangle'); }
   else if (kind === 'wrong') { tone(300,0,.16,'sine',.12); tone(240,.12,.22,'sine',.12); }
   else if (kind === 'coin') { tone(990,0,.08,'square',.08); tone(1320,.07,.14,'square',.08); }
@@ -91,4 +193,4 @@ if (!document.getElementById('confetti-kf')) {
   document.head.appendChild(s);
 }
 
-Object.assign(window, { speakHe, chime, Confetti });
+Object.assign(window, { speakHe, playPrompt, stopVoice, stopSpeech: stopVoice, unlockAudio, chime, Confetti });

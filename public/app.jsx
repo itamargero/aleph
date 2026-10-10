@@ -1,220 +1,201 @@
-/* ============================================================
-   HEBREW HEROES — exercise session + app root + settings
-   ============================================================ */
-
-// ---------- a graded run through one level's exercises ----------
-function ExerciseSession({ area, level, onComplete, onExit }) {
+/* App navigation and durable progress. The exercise components own answer feedback;
+   this session owns advancement, and cancels it when a child leaves a lesson. */
+function ExerciseSession({ level, onComplete, onExit }) {
   const [index, setIndex] = React.useState(0);
-  const [mistakes, setMistakes] = React.useState(0);
   const [flash, setFlash] = React.useState(false);
+  const mistakes = React.useRef(0);
+  const advancing = React.useRef(false);
+  const timer = React.useRef(null);
+  const active = React.useRef(true);
   const total = level.exercises.length;
-  const ex = level.exercises[index];
 
-  const solved = React.useCallback(() => {
+  React.useEffect(() => () => { active.current = false; clearTimeout(timer.current); window.stopSpeech?.(); }, []);
+  React.useEffect(() => { advancing.current = false; }, [index]);
+
+  const solved = () => {
+    if (!active.current || advancing.current) return;
+    advancing.current = true;
     window.chime('coin');
     setFlash(true);
-    setTimeout(() => {
+    timer.current = setTimeout(() => {
+      if (!active.current) return;
       setFlash(false);
-      if (index + 1 >= total) {
-        const m = mistakes;
-        const stars = m === 0 ? 3 : m <= 2 ? 2 : 1;
+      if (index + 1 === total) {
+        const stars = mistakes.current === 0 ? 3 : mistakes.current <= 2 ? 2 : 1;
         onComplete(stars, total * 5 + stars * 5);
-      } else setIndex(index + 1);
-    }, 850);
-  }, [index, total, mistakes]);
-
-  const wrong = React.useCallback(() => setMistakes(m => m + 1), []);
+      } else setIndex(current => current + 1);
+    }, 650);
+  };
 
   return (
-    <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg,#fffaf0,#fff2dc)' }}>
-      {/* progress bar */}
-      <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 74, display: 'flex', alignItems: 'center', gap: 16, padding: '0 24px', zIndex: 45 }}>
-        <button className="icon-btn" onClick={onExit} aria-label="Exit" style={{ width: 52, height: 52 }}>
-          <span style={{ fontSize: 22, color: 'var(--ink-soft)' }}>✕</span>
-        </button>
-        <div style={{ flex: 1, height: 22, background: '#ece4d6', borderRadius: 999, overflow: 'hidden', boxShadow: 'inset 0 2px 4px rgba(0,0,0,.1)' }}>
-          <div style={{ height: '100%', width: `${(index / total) * 100}%`, background: 'linear-gradient(90deg,#6ee7a8,#34c87f)', borderRadius: 999, transition: 'width .5s cubic-bezier(.3,1.4,.5,1)' }} />
+    <main className="session-screen">
+      <header className="session-header">
+        <button className="icon-btn" onClick={onExit} aria-label="Back to levels"><span aria-hidden="true">⌂</span></button>
+        <div className="task-progress" role="progressbar" aria-label="Lesson progress" aria-valuemin={0} aria-valuemax={total} aria-valuenow={index + (flash ? 1 : 0)}>
+          {level.exercises.map((_, i) => <span key={i} className={i < index || (i === index && flash) ? 'filled' : i === index ? 'current' : ''} />)}
         </div>
-        <div style={{ fontWeight: 700, fontSize: 20, color: 'var(--ink-soft)', minWidth: 54, textAlign: 'right' }}>{index + 1}/{total}</div>
-      </div>
-
-      <ExerciseRenderer key={index} ex={ex} onSolved={solved} onWrong={wrong} />
-
-      {flash && <Confetti count={28} origin="mid" />}
-      {flash && (
-        <div className="pop-in" style={{ position: 'absolute', top: 96, left: '50%', transform: 'translateX(-50%)', background: 'var(--correct)', color: '#fff', fontWeight: 700, fontSize: 26, padding: '10px 30px', borderRadius: 999, boxShadow: 'var(--soft)', zIndex: 55 }}>
-          נכון! Correct!
-        </div>
-      )}
-    </div>
+        <OfflineBadge />
+      </header>
+      <ExerciseRenderer key={index} ex={level.exercises[index]} onSolved={solved} onWrong={() => { mistakes.current++; }} />
+      {flash && <div className="success-toast" role="status" aria-label="Well done"><Icon name="star" size={40} /><span aria-hidden="true">✓</span></div>}
+      {flash && <Confetti count={18} origin="mid" />}
+    </main>
   );
 }
 
-// ---------- Settings modal (product-facing, behind gear) ----------
-function Settings({ snd, onChange, onClose, onReset }) {
-  const Row = ({ label, on, set }) => (
-    <button onClick={() => set(!on)} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', padding: '16px 20px', background: '#fff', borderRadius: 'var(--r-md)', boxShadow: 'var(--pop)', marginBottom: 14 }}>
-      <span style={{ fontSize: 21, fontWeight: 600, color: 'var(--ink)' }}>{label}</span>
-      <span style={{ width: 60, height: 34, borderRadius: 999, background: on ? 'var(--meadow-2)' : '#d7d0c4', position: 'relative', transition: 'background .2s' }}>
-        <span style={{ position: 'absolute', top: 4, left: on ? 30 : 4, width: 26, height: 26, borderRadius: '50%', background: '#fff', transition: 'left .2s', boxShadow: '0 2px 4px rgba(0,0,0,.2)' }} />
-      </span>
-    </button>
-  );
-  return (
-    <div style={{ position: 'absolute', inset: 0, background: 'rgba(40,36,64,.55)', display: 'grid', placeItems: 'center', zIndex: 60 }}>
-      <div className="pop-in" style={{ width: 460, background: 'var(--paper)', borderRadius: 'var(--r-xl)', boxShadow: 'var(--soft-lg)', padding: 32, position: 'relative' }}>
-        <button onClick={onClose} aria-label="Close" style={{ position: 'absolute', top: 18, right: 18, width: 44, height: 44, borderRadius: '50%', background: '#f0ece4', fontSize: 22, color: 'var(--ink-soft)' }}>✕</button>
-        <div style={{ fontSize: 28, fontWeight: 700, marginBottom: 20, textAlign: 'center' }}>Settings</div>
-        <Row label="🔊 Sound effects" on={snd.sfx} set={v => onChange('sfx', v)} />
-        <Row label="🗣️ Hebrew voice" on={snd.voice} set={v => onChange('voice', v)} />
-        <Row label="🌿 Reduce motion" on={snd.reduce} set={v => onChange('reduce', v)} />
-        <div style={{ borderTop: '2px dashed #e0d8c8', margin: '8px 0 16px' }} />
-        <button className="btn ghost" onClick={onReset} style={{ width: '100%', justifyContent: 'center', color: 'var(--coral-deep)', fontSize: 18 }}>Reset all progress</button>
-      </div>
-    </div>
-  );
+function useOffline() {
+  const [state, setState] = React.useState(() => window.HH_OFFLINE || { status: 'preparing', completed: 0, total: 0 });
+  React.useEffect(() => {
+    const changed = event => setState({ ...event.detail });
+    window.addEventListener('hh-offline', changed);
+    if (window.HH_OFFLINE) setState({ ...window.HH_OFFLINE });
+    return () => window.removeEventListener('hh-offline', changed);
+  }, []);
+  return state;
 }
 
-// ============================================================
-//  APP ROOT
-// ============================================================
-const SAVE_KEY = 'hebrew-heroes-v1';
-function loadSave() {
-  try { return JSON.parse(localStorage.getItem(SAVE_KEY)) || {}; } catch (e) { return {}; }
+function PlaneMark() {
+  return <svg viewBox="0 0 24 24" width="26" height="26" fill="currentColor" aria-hidden="true"><path d="M22 11V9l-8-5V2a2 2 0 0 0-4 0v2L2 9v2l8-2v7l-3 2v2l5-1 5 1v-2l-3-2V9z" /></svg>;
+}
+
+function OfflineBadge() {
+  const offline = useOffline();
+  const ready = offline.status === 'ready';
+  const label = ready ? 'Ready for airplane' : offline.status === 'error' ? 'Download interrupted. Tap to retry.' : offline.status === 'unsupported' ? 'Offline play unavailable in this browser' : 'Saving for airplane';
+  return <button className={`offline-badge ${ready ? 'ready' : ''}`} title={label} aria-label={label} onClick={() => { if (!ready) window.prepareOffline?.(); }}>
+    <PlaneMark /><span className="offline-label">{ready ? 'Ready for airplane' : offline.status === 'error' ? 'Retry download' : offline.status === 'unsupported' ? 'Online only' : `${offline.total ? Math.floor(100 * offline.completed / offline.total) : 0}%`}</span>
+    <span aria-hidden="true">{ready ? '✓' : offline.status === 'error' ? '↻' : '↓'}</span>
+  </button>;
+}
+window.OfflineBadge = OfflineBadge;
+
+/* Keep parent settings keyboard accessible, including closing and focus return. */
+function useDialog(ref, onClose) {
+  React.useEffect(() => {
+    const previous = document.activeElement;
+    const root = ref.current;
+    root?.querySelector('button')?.focus();
+    const keys = event => {
+      if (event.key === 'Escape') onClose();
+      if (event.key !== 'Tab') return;
+      const buttons = [...root.querySelectorAll('button:not(:disabled), a[href], input')];
+      const first = buttons[0], last = buttons[buttons.length - 1];
+      if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last?.focus(); }
+      else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus(); }
+    };
+    root?.addEventListener('keydown', keys);
+    return () => { root?.removeEventListener('keydown', keys); previous?.focus?.(); };
+  }, [onClose]);
+}
+
+function Settings({ snd, onChange, onClose, onReset, saved }) {
+  const offline = useOffline();
+  const [confirmReset, setConfirmReset] = React.useState(false);
+  const [holding, setHolding] = React.useState(false);
+  const resetTimer = React.useRef(null);
+  const dialog = React.useRef(null);
+  useDialog(dialog, onClose);
+  const cancelReset = () => { clearTimeout(resetTimer.current); resetTimer.current = null; setHolding(false); };
+  React.useEffect(() => () => clearTimeout(resetTimer.current), []);
+  const holdReset = () => {
+    if (resetTimer.current) return;
+    setHolding(true);
+    resetTimer.current = setTimeout(() => { resetTimer.current = null; onReset(); }, 3000);
+  };
+  const row = (key, label, symbol) => <button className="setting-row" role="switch" aria-checked={snd[key]} onClick={() => onChange(key, !snd[key])}>
+    <span><span aria-hidden="true">{symbol} </span>{label}</span><span className={`toggle ${snd[key] ? 'on' : ''}`} aria-hidden="true"><span /></span>
+  </button>;
+  return (
+    <div className="modal-backdrop">
+      <section className="modal-card settings-card" role="dialog" aria-modal="true" aria-labelledby="settings-title" ref={dialog}>
+        <button className="icon-btn modal-close" onClick={onClose} aria-label="Close settings">✕</button>
+        <h2 id="settings-title">For grown-ups</h2>
+        {row('voice', 'Hebrew voice', '🔊')}
+        {row('sfx', 'Happy sounds', '♫')}
+        {row('reduce', 'Less movement', '🌿')}
+        <div className="offline-info" role="status">
+          <h3><PlaneMark /> {offline.status === 'ready' ? 'Ready for airplane' : 'Save for airplane'}</h3>
+          <p>{offline.status === 'ready' ? 'Every lesson, picture, font, and Hebrew recording is saved on this device.' : offline.status === 'unsupported' ? 'Use Safari on the iPad to save the game for offline play.' : 'Keep this page open with Wi-Fi until the airplane shows a green check. The first download includes every world.'}</p>
+          {offline.status === 'error' && <><p>The download was interrupted. Connect to Wi-Fi and try again.</p><button className="btn sun" onClick={() => window.prepareOffline?.()}>↻ Retry download</button></>}
+          {offline.status === 'preparing' && <progress value={offline.completed} max={offline.total || 1} aria-label="Offline download progress" />}
+          <p>On iPad: Safari → Share → Add to Home Screen. Open that icon while online and wait for the green airplane check there too. Before leaving, switch on airplane mode, reopen the game, and tap a speaker.</p>
+          <p>Progress stays on this device. Keep the game installed and avoid clearing Safari website data.</p>
+        </div>
+        {!saved && <p role="alert">Your device could not save progress. Play still works, but keep this tab open to retain this session.</p>}
+        {confirmReset ? <div className="reset-confirm"><p>Grown-ups: hold for 3 seconds to erase stars and stickers.</p>
+          <button className={`btn coral ${holding ? 'holding' : ''}`} onPointerDown={holdReset} onPointerUp={cancelReset} onPointerLeave={cancelReset} onPointerCancel={cancelReset} onBlur={cancelReset}
+            onKeyDown={event => { if ([' ', 'Enter'].includes(event.key) && !event.repeat) { event.preventDefault(); holdReset(); } }} onKeyUp={cancelReset}>Hold to erase progress</button>
+          <button className="btn ghost" onClick={() => { cancelReset(); setConfirmReset(false); }}>Keep progress</button>
+        </div> : <button className="reset-link" onClick={() => setConfirmReset(true)}>Reset progress…</button>}
+      </section>
+    </div>
+  );
 }
 
 function App() {
-  const saved = React.useRef(loadSave()).current;
-  const [view, setView] = React.useState('map');            // map|area|preview|session|complete|stickers
-  const [areaIdx, setAreaIdx] = React.useState(0);
+  const [save, setSave] = React.useState(() => window.HH_PROGRESS.load());
+  const [saveOkay, setSaveOkay] = React.useState(true);
+  const [view, setView] = React.useState('map');
+  const [areaIdx, setAreaIdx] = React.useState(() => window.HH_PROGRESS.next(save.progress).areaIdx);
   const [level, setLevel] = React.useState(null);
+  const [run, setRun] = React.useState(0);
   const [lastResult, setLastResult] = React.useState({ stars: 0, coins: 0 });
-  const [unlockAll, setUnlockAll] = React.useState(false);
-
-  const [progress, setProgress] = React.useState(saved.progress || {});  // levelId -> stars
-  const [coins, setCoins] = React.useState(saved.coins || 0);
-  const [stickers, setStickers] = React.useState(saved.stickers || []);
-  const [snd, setSnd] = React.useState(saved.snd || { sfx: true, voice: true, reduce: false });
   const [showSettings, setShowSettings] = React.useState(false);
+  const [audioError, setAudioError] = React.useState(false);
+  const complete = React.useRef(false);
+  const { progress, coins, stickers, snd } = save;
+  const stars = Object.values(progress).reduce((total, count) => total + count, 0);
 
-  const totalStars = Object.values(progress).reduce((a, b) => a + b, 0);
-
-  // persist
-  React.useEffect(() => {
-    localStorage.setItem(SAVE_KEY, JSON.stringify({ progress, coins, stickers, snd }));
-  }, [progress, coins, stickers, snd]);
-
-  // apply sound + motion settings globally
+  React.useEffect(() => { setSaveOkay(window.HH_PROGRESS.store(save)); }, [save]);
   React.useEffect(() => {
     window.HH_SOUND.sfx = snd.sfx; window.HH_SOUND.voice = snd.voice;
-    document.getElementById('stage').classList.toggle('reduce-motion', !!snd.reduce);
+    if (!snd.voice) window.stopSpeech?.();
+    document.getElementById('stage').classList.toggle('reduce-motion', snd.reduce);
   }, [snd]);
+  React.useEffect(() => {
+    const unlock = () => window.unlockAudio?.();
+    const audio = event => setAudioError(event.detail?.status === 'error');
+    document.addEventListener('pointerdown', unlock, { passive: true });
+    document.addEventListener('keydown', unlock);
+    window.addEventListener('hh-audio', audio);
+    return () => { document.removeEventListener('pointerdown', unlock); document.removeEventListener('keydown', unlock); window.removeEventListener('hh-audio', audio); };
+  }, []);
 
-  // expose unlock-all to the Tweaks panel
-  React.useEffect(() => { window.__hhTweak = { setUnlockAll, setSnd: (k, v) => setSnd(s => ({ ...s, [k]: v })), getSnd: () => snd }; });
-
-  const playable = AREAS.filter(a => a.levels);
-  const areaUnlocked = (i) => {
-    const a = AREAS[i];
-    if (a.locked) return false;
-    if (unlockAll) return true;
-    const pIdx = playable.indexOf(a);
-    if (pIdx <= 0) return true;
-    const prev = playable[pIdx - 1];
-    return prev.levels.every(l => progress[l.id]);
-  };
-  const levelUnlocked = (area, i) => unlockAll || i === 0 || !!progress[area.levels[i - 1].id];
-
-  const setSnding = (k, v) => setSnd(s => ({ ...s, [k]: v }));
-  const resetAll = () => { setProgress({}); setCoins(0); setStickers([]); setShowSettings(false); setView('map'); };
-
-  const onComplete = (stars, coinsEarned) => {
-    setProgress(p => ({ ...p, [level.id]: Math.max(p[level.id] || 0, stars) }));
-    setCoins(c => c + coinsEarned);
-    setStickers(s => s.includes(level.reward.label) ? s : [...s, level.reward.label]);
-    setLastResult({ stars, coins: coinsEarned });
+  const areaUnlocked = i => window.HH_PROGRESS.areaUnlocked(i, progress, save.unlockedAreas);
+  const levelUnlocked = (area, i) => window.HH_PROGRESS.levelUnlocked(AREAS.indexOf(area), i, progress, save.unlockedAreas);
+  const openLevel = (lv, idx = areaIdx) => { window.stopSpeech?.(); window.unlockAudio?.(); setAreaIdx(idx); setLevel(lv); setView('preview'); };
+  const start = () => { window.unlockAudio?.(); complete.current = false; setRun(value => value + 1); setView('session'); };
+  const onComplete = (earnedStars, earnedCoins) => {
+    if (complete.current) return;
+    complete.current = true;
+    setSave(current => ({ ...current, progress: { ...current.progress, [level.id]: Math.max(current.progress[level.id] || 0, earnedStars) },
+      coins: current.coins + earnedCoins, stickers: current.stickers.includes(level.reward.label) ? current.stickers : [...current.stickers, level.reward.label] }));
+    setLastResult({ stars: earnedStars, coins: earnedCoins });
     setView('complete');
   };
-
-  // next level helper
-  const nextLevel = () => {
-    if (!level) return null;
-    const idxInOrder = window.LEVEL_ORDER.findIndex(o => o.levelId === level.id);
-    const nxt = window.LEVEL_ORDER[idxInOrder + 1];
-    if (!nxt) return null;
-    const a = AREAS.find(x => x.id === nxt.areaId);
-    const l = a.levels.find(x => x.id === nxt.levelId);
-    return { a, l, areaIdx: AREAS.indexOf(a) };
+  const orderIndex = level ? LEVEL_ORDER.findIndex(item => item.levelId === level.id) : -1;
+  const next = LEVEL_ORDER[orderIndex + 1];
+  const goNext = () => {
+    if (!next) return;
+    const idx = AREAS.findIndex(item => item.id === next.areaId);
+    openLevel(AREAS[idx].levels.find(item => item.id === next.levelId), idx);
   };
-  const hasNext = !!nextLevel();
-
+  const map = () => { window.stopSpeech?.(); setView('map'); };
+  const closeSettings = React.useCallback(() => setShowSettings(false), []);
+  const hud = { coins, stars, onStickers: () => setView('stickers'), onSettings: () => setShowSettings(true) };
   const area = AREAS[areaIdx];
-
-  return (
-    <React.Fragment>
-      {view === 'map' && (
-        <WorldMap progress={progress} areaUnlocked={areaUnlocked} coins={coins} stars={totalStars}
-          onArea={(i) => { setAreaIdx(i); setView('area'); }}
-          onStickers={() => setView('stickers')} onSettings={() => setShowSettings(true)} />
-      )}
-      {(view === 'area' || view === 'preview') && (
-        <AreaView area={area} progress={progress} levelUnlocked={levelUnlocked} coins={coins} stars={totalStars}
-          onLevel={(lv) => { setLevel(lv); setView('preview'); }}
-          onBack={() => setView('map')} onStickers={() => setView('stickers')} onSettings={() => setShowSettings(true)} />
-      )}
-      {view === 'preview' && level && (
-        <LevelPreview area={area} level={level} onStart={() => setView('session')} onBack={() => setView('area')} />
-      )}
-      {view === 'session' && (
-        <ExerciseSession area={area} level={level}
-          onComplete={onComplete} onExit={() => setView('area')} />
-      )}
-      {view === 'complete' && (
-        <LevelComplete level={level} starsEarned={lastResult.stars} coinsEarned={lastResult.coins}
-          hasNext={hasNext}
-          onReplay={() => setView('session')}
-          onMap={() => setView('map')}
-          onNext={() => { const n = nextLevel(); if (n) { setAreaIdx(n.areaIdx); setLevel(n.l); setView('preview'); } }} />
-      )}
-      {view === 'stickers' && (
-        <StickerBook stickers={stickers} coins={coins} stars={totalStars} onBack={() => setView('map')} />
-      )}
-      {showSettings && (
-        <Settings snd={snd} onChange={setSnding} onClose={() => setShowSettings(false)} onReset={resetAll} />
-      )}
-    </React.Fragment>
-  );
+  return <>
+    {view === 'map' && <WorldMap {...hud} progress={progress} areaUnlocked={areaUnlocked} onArea={i => { setAreaIdx(i); setView('area'); }}
+      onPlay={() => { const recommended = window.HH_PROGRESS.next(progress); openLevel(recommended.level, recommended.areaIdx); }} />}
+    {(view === 'area' || view === 'preview') && <AreaView {...hud} area={area} progress={progress} levelUnlocked={levelUnlocked} onLevel={lv => openLevel(lv)} onBack={map} />}
+    {view === 'preview' && level && <LevelPreview area={area} level={level} onStart={start} onBack={() => setView('area')} />}
+    {view === 'session' && level && <ExerciseSession key={`${level.id}-${run}`} level={level} onComplete={onComplete} onExit={() => setView('area')} />}
+    {view === 'complete' && <LevelComplete level={level} starsEarned={lastResult.stars} coinsEarned={lastResult.coins} hasNext={!!next} onReplay={start} onMap={map} onNext={goNext} />}
+    {view === 'stickers' && <StickerBook stickers={stickers} coins={coins} stars={stars} onBack={map} />}
+    {showSettings && <Settings snd={snd} saved={saveOkay} onClose={closeSettings} onChange={(key, value) => setSave(current => ({ ...current, snd: { ...current.snd, [key]: value } }))}
+      onReset={() => { window.stopSpeech?.(); setSave(window.HH_PROGRESS.normalize(null)); setShowSettings(false); setLevel(null); setView('map'); }} />}
+    {audioError && <button className="audio-warning" onClick={() => { window.unlockAudio?.(); setAudioError(false); }}>🔊 Tap a speaker to try sound again</button>}
+  </>;
 }
-
-// ---------- reviewer-facing Tweaks panel (separate, unscaled root) ----------
-function HHTweaks() {
-  const [t, setTweak] = useTweaks({ sfx: true, voice: true, reduce: false, unlockAll: false });
-  React.useEffect(() => {
-    const api = window.__hhTweak;
-    if (!api) return;
-    api.setSnd('sfx', t.sfx); api.setSnd('voice', t.voice); api.setSnd('reduce', t.reduce);
-  }, [t.sfx, t.voice, t.reduce]);
-  React.useEffect(() => { if (window.__hhTweak) window.__hhTweak.setUnlockAll(t.unlockAll); }, [t.unlockAll]);
-  return (
-    <TweaksPanel title="Tweaks">
-      <TweakSection label="Sound & motion" />
-      <TweakToggle label="Sound effects" value={t.sfx} onChange={v => setTweak('sfx', v)} />
-      <TweakToggle label="Hebrew voice" value={t.voice} onChange={v => setTweak('voice', v)} />
-      <TweakToggle label="Reduce motion" value={t.reduce} onChange={v => setTweak('reduce', v)} />
-      <TweakSection label="Demo" />
-      <TweakToggle label="Unlock all worlds" value={t.unlockAll} onChange={v => setTweak('unlockAll', v)} />
-    </TweaksPanel>
-  );
-}
-
-// ---------- mount + responsive scaling ----------
-function scaleStage() {
-  const stage = document.getElementById('stage');
-  const s = Math.min(window.innerWidth / 1280, window.innerHeight / 800);
-  stage.style.transform = `scale(${s})`;
-}
-window.addEventListener('resize', scaleStage);
-scaleStage();
 
 ReactDOM.createRoot(document.getElementById('stage')).render(<App />);
-ReactDOM.createRoot(document.getElementById('tweaks-root')).render(<HHTweaks />);

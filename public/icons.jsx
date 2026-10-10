@@ -6,7 +6,6 @@
 // ---- Alefi: the flying Aleph companion ----
 // Body is the real glyph א so the letter the child is learning IS the hero.
 function Mascot({ mood = 'happy', size = 150, style = {} }) {
-  const blink = mood === 'cheer' || mood === 'happy';
   const eyeY = mood === 'sad' ? 44 : 42;
   const mouth = {
     happy:  'M40 64 Q60 80 80 64',
