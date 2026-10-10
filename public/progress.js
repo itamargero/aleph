@@ -61,19 +61,15 @@
     return { areaIdx: 0, area: window.AREAS[0], level: window.AREAS[0].levels[0] };
   }
 
-  // A curriculum extension must not take away worlds a child already reached.
-  function areaUnlocked(index, progress, unlockedAreas = []) {
-    const area = window.AREAS[index];
-    if (!area?.levels) return false;
-    return index === 0 || unlockedAreas.includes(area.id) || area.levels.some(level => progress[level.id]) ||
-      window.AREAS[index - 1].levels.every(level => progress[level.id]);
+  // Children may choose any world or lesson from their first visit. Scores
+  // still guide the continue button, but never restrict what they can play.
+  function areaUnlocked(index) {
+    return Number.isInteger(index) && index >= 0 && !!window.AREAS[index]?.levels?.length;
   }
 
-  function levelUnlocked(areaIndex, levelIndex, progress, unlockedAreas = []) {
-    const area = window.AREAS[areaIndex];
-    const level = area?.levels?.[levelIndex];
-    return !!level && areaUnlocked(areaIndex, progress, unlockedAreas) &&
-      (levelIndex === 0 || !!progress[level.id] || !!progress[area.levels[levelIndex - 1].id]);
+  function levelUnlocked(areaIndex, levelIndex) {
+    return areaUnlocked(areaIndex) && Number.isInteger(levelIndex) && levelIndex >= 0 &&
+      !!window.AREAS[areaIndex].levels[levelIndex];
   }
 
   window.HH_PROGRESS = { key, normalize, load, store, next, areaUnlocked, levelUnlocked };

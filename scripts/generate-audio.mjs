@@ -44,6 +44,9 @@ export function loadCurriculum(source) {
 
 export function collectSpeech(curriculum) {
   const entries = new Map();
+  // Parent-facing metadata may contain Hebrew examples inside English prose.
+  // Record the child-facing speech fields, rather than reading those descriptions.
+  const metadataFields = new Set(['objective', 'title', 'name', 'blurb', 'en', 'label']);
   const add = (text, spoken = text) => {
     const key = normalizeSpeech(text);
     if (/[\u0590-\u05ff]/u.test(key)) entries.set(key, normalizeSpeech(spoken));
@@ -51,7 +54,9 @@ export function collectSpeech(curriculum) {
   const visit = value => {
     if (typeof value === 'string') add(value);
     else if (Array.isArray(value)) value.forEach(visit);
-    else if (value && typeof value === 'object') Object.values(value).forEach(visit);
+    else if (value && typeof value === 'object') {
+      Object.entries(value).forEach(([key, child]) => { if (!metadataFields.has(key)) visit(child); });
+    }
   };
   visit(curriculum);
   Object.entries(curriculum.WORDS || {}).forEach(([word, record]) => {

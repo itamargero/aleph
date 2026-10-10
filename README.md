@@ -2,6 +2,8 @@
 
 A Hebrew adventure for children who are learning their letters. Pictures, recorded Hebrew, guided letter and sentence building, and a sticker collection help children play without reading English.
 
+All eight worlds and 25 lessons are available from the start. The big play button recommends the next unfinished lesson; children can also choose any world and lesson themselves.
+
 ## Play offline on an iPad
 
 1. Open the production site in Safari while connected to Wi-Fi.

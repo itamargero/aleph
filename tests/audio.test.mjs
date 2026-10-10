@@ -6,6 +6,28 @@ const curriculum = loadCurriculum(await readFile(new URL('../public/data.js', im
 const manifest = JSON.parse(await readFile(new URL('../public/audio/manifest.json', import.meta.url), 'utf8'));
 
 describe('bundled Hebrew voice for every activity', () => {
+  test('parent metadata is excluded while teaching, names and exercise speech remain', () => {
+    const parentText = 'Meet א through ז by copying and listening';
+    const childText = 'בַּבַּיִת יֵשׁ כֶּלֶב.';
+    const speech = collectSpeech({
+      LETTERS: { 'א': { name: parentText, nameHe: 'אָלֶף' } },
+      AREAS: [{
+        name: parentText, blurb: parentText,
+        levels: [{
+          objective: parentText, title: parentText, teaches: ['א', 'כֶּלֶב'],
+          reward: { label: parentText },
+          exercises: [{ en: parentText, story: childText, speak: 'אֵיפֹה הַכֶּלֶב?', model: 'זֶה כֶּלֶב', options: ['כֶּלֶב'] }],
+        }],
+      }],
+    });
+    expect(speech.has(parentText)).toBe(false);
+    expect(speech.get('א')).toBe('אָלֶף');
+    for (const text of ['כֶּלֶב', childText, 'אֵיפֹה הַכֶּלֶב?', 'זֶה כֶּלֶב']) {
+      expect(speech.has(normalizeSpeech(text)), text).toBe(true);
+    }
+    expect(Object.keys(manifest.entries).some(text => /[A-Za-z]/.test(text))).toBe(false);
+  });
+
   test('every curriculum utterance has the intended pronunciation and a nonempty committed MP3', async () => {
     const required = collectSpeech(curriculum);
     const checkedUrls = new Set();
