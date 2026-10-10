@@ -10,15 +10,22 @@ Complete all eight worlds using supported exercise types, visual story scenes, v
 ## Plan
 - [x] Inspect repository, prototype, curriculum, dependencies, and current branch.
 - [x] Isolate changes and preserve the existing package-lock edit.
-- [ ] Complete all worlds and validate curriculum references and solutions.
-- [ ] Replace scaled screens with responsive child-friendly navigation and exercises.
-- [ ] Bundle dependencies locally, generate all audio, and cache the complete game.
-- [ ] Verify offline cold launch, full curriculum completion, audio, progress, and iPad layouts.
-- [ ] Run build, TypeScript, meaningful tests, and code review; fix material findings.
+- [x] Complete all worlds and validate curriculum references and solutions.
+- [x] Replace scaled screens with responsive child-friendly navigation and exercises.
+- [x] Bundle dependencies locally, generate all audio, and cache the complete game.
+- [x] Verify offline cold launch, full curriculum completion, audio, progress, and iPad layouts.
+- [x] Run build, TypeScript, meaningful tests, and code review; fix material findings.
 - [ ] Merge to main and verify the named production deployment and offline artifacts.
 
 ## Verification
-Pending.
+- All eight worlds contain 25 playable levels and 114 activities. Browser clicks completed every activity with the network disabled; the resulting 75 stars, 25 stickers, and 945 coins survived an offline reload.
+- The full download contains 187 resources (2.43 MiB), including 174 MP3 recordings and both local fonts. WebKit decoded every recording offline and returned a valid 206 response for an audio byte range.
+- WebKit with the iPad device profile reopened a fresh page at `/` offline, played recorded teaching audio, and migrated a legacy save without losing stars, coins, stickers, or previously unlocked worlds. The final runtime version is `75605123ff42194d8dba`; this cold launch produced no page errors or failed network requests.
+- Portrait, landscape, and narrow layouts (768×1024, 1024×768, 390×844) had no horizontal overflow or enabled game buttons smaller than 56 CSS pixels. Wrong-answer hints worked, and rapid correct taps followed by exit did not advance or award a lesson after leaving.
+- `npm test`: 21 tests passed across curriculum, saved progress, audio coverage, and the generated service worker. Tests cover partial/corrupt downloads, old-cache preservation, eviction and repair, offline routes, and audio ranges. Lint, TypeScript, production build, and `git diff --check` passed.
+- CodeRabbit completed its review against `main` after the implementation commit, with two minor findings. Removed the audio retry button's overriding status role and guarded registration/worker listeners with WeakSets. A fresh WebKit check verified the button's native role and five download retries with one listener per object.
+- The initial GitHub preview deployment was Ready; its deployed HTML and service worker matched local hashes through authenticated Vercel access. Production merge and verification are the remaining release step.
+- These browser checks emulate an iPad; the daughter's physical iPad and Home Screen installation still need the documented preflight before travel.
 
 ### Research decisions
 - Apple Safari requires a user gesture to start audio; use a persistent Web Audio context unlocked by play/speaker taps. Local recordings avoid dependence on an installed speech voice.

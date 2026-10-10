@@ -5,6 +5,8 @@
   let preparing;
   let lastWorkerMessage = Date.now();
   const obsoleteVersions = new Set();
+  const observedRegistrations = new WeakSet();
+  const observedWorkers = new WeakSet();
   window.HH_OFFLINE = { status: 'preparing', completed: 0, total: 0, error: '', version: '' };
 
   function publish(state) {
@@ -37,6 +39,8 @@
   function observe(worker, requestType = 'HH_STATUS') {
     if (!worker) return;
     requestStatus(worker, requestType);
+    if (observedWorkers.has(worker)) return;
+    observedWorkers.add(worker);
     worker.addEventListener('statechange', () => {
       if (worker.state === 'installed' || worker.state === 'activated') requestStatus(worker);
       if (worker.state === 'redundant' && window.HH_OFFLINE.status === 'preparing') {
@@ -84,7 +88,11 @@
           ? await navigator.serviceWorker.register('/sw.js', { scope: '/', updateViaCache: 'none' })
           : await navigator.serviceWorker.getRegistration('/');
         if (!registration) throw new Error('Visit this game on Wi-Fi first and wait for the airplane checkmark.');
-        registration.addEventListener('updatefound', () => observe(registration.installing));
+        if (!observedRegistrations.has(registration)) {
+          observedRegistrations.add(registration);
+          const observedRegistration = registration;
+          registration.addEventListener('updatefound', () => observe(observedRegistration.installing));
+        }
         observe(registration.installing);
         observe(registration.waiting);
         observe(registration.active, online && !registration.installing && !registration.waiting ? 'HH_PREPARE' : 'HH_STATUS');

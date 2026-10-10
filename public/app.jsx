@@ -194,7 +194,7 @@ function App() {
     {view === 'stickers' && <StickerBook stickers={stickers} coins={coins} stars={stars} onBack={map} />}
     {showSettings && <Settings snd={snd} saved={saveOkay} onClose={closeSettings} onChange={(key, value) => setSave(current => ({ ...current, snd: { ...current.snd, [key]: value } }))}
       onReset={() => { window.stopSpeech?.(); setSave(window.HH_PROGRESS.normalize(null)); setShowSettings(false); setLevel(null); setView('map'); }} />}
-    {audioError && <button className="audio-warning" role="status" onClick={() => { window.unlockAudio?.(); setAudioError(false); }}>🔊 Tap a speaker to try sound again</button>}
+    {audioError && <button className="audio-warning" onClick={() => { window.unlockAudio?.(); setAudioError(false); }}>🔊 Tap a speaker to try sound again</button>}
   </>;
 }
 
