@@ -1,379 +1,212 @@
-/* ============================================================
-   HEBREW HEROES — exercise engine
-   One renderer, many exercise types. Each reports onSolved().
-   Exposes window.ExerciseRenderer, window.AudioButton
-   ============================================================ */
-
-// round "hear it again" button
-function AudioButton({ text, size = 78, big }) {
-  const [ping, setPing] = React.useState(false);
-  const play = () => { setPing(true); window.speakHe(text); window.chime('tap'); setTimeout(() => setPing(false), 600); };
-  return (
-    <button onClick={play} aria-label="Play sound" style={{
-      width: size, height: size, borderRadius: '50%',
-      background: 'linear-gradient(180deg,#8fd6ff,#5cb3ff)',
-      boxShadow: '0 7px 0 rgba(0,0,0,.16)', display: 'grid', placeItems: 'center',
-      transition: 'transform .1s', transform: ping ? 'scale(.92)' : 'scale(1)',
-    }}>
-      <svg width={size*0.5} height={size*0.5} viewBox="0 0 24 24" fill="#fff">
-        <path d="M4 9v6h4l5 5V4L8 9H4z"/>
-        <path d="M16 8.5a4 4 0 0 1 0 7" stroke="#fff" strokeWidth="2" fill="none" strokeLinecap="round"/>
-        {big && <path d="M18.5 5.5a8 8 0 0 1 0 13" stroke="#fff" strokeWidth="2" fill="none" strokeLinecap="round"/>}
-      </svg>
-    </button>
-  );
-}
-
-// hook handling pick → correct/wrong feedback for single-answer exercises
-function useChoice(answer, onSolved, onWrong) {
-  const [status, setStatus] = React.useState({});  // value -> 'wrong' | 'correct'
-  const [done, setDone] = React.useState(false);
-  const [reveal, setReveal] = React.useState(false);
-  const attempts = React.useRef(0);
-
-  const pick = (val) => {
-    if (done || status[val] === 'wrong') return;
-    if (val === answer) {
-      setStatus(s => ({ ...s, [val]: 'correct' }));
-      setDone(true);
-      window.chime('correct');
-      setTimeout(() => onSolved && onSolved(), 750);
-    } else {
-      attempts.current += 1;
-      setStatus(s => ({ ...s, [val]: 'wrong' }));
-      window.chime('wrong');
-      onWrong && onWrong(attempts.current);
-      if (attempts.current >= 2) setTimeout(() => setReveal(true), 250);
-    }
-  };
-  return { status, done, reveal, attempts, pick };
-}
-
-// the mascot speech bubble shown in every exercise
-function Coach({ text, mood }) {
-  return (
-    <div style={{ display: 'flex', alignItems: 'flex-end', gap: 12, position: 'absolute', left: 28, bottom: 24 }}>
-      <Mascot mood={mood} size={96} />
-      {text && (
-        <div className="pop-in" style={{
-          background: '#fff', borderRadius: '22px 22px 22px 6px', padding: '12px 18px',
-          boxShadow: 'var(--soft)', fontSize: 18, fontWeight: 600, color: 'var(--ink)', maxWidth: 230, marginBottom: 18,
-        }}>{text}</div>
-      )}
-    </div>
-  );
-}
-
-// ---- generic card grid for choice exercises ----
-function CardGrid({ children, cols }) {
-  return (
-    <div style={{ display: 'grid', gridTemplateColumns: `repeat(${cols}, 1fr)`, gap: 22, justifyItems: 'center', width: '100%', maxWidth: 720 }}>
-      {children}
-    </div>
-  );
-}
-function cardStyle(state, base = {}) {
-  let extra = {};
-  if (state === 'correct') extra = { background: 'linear-gradient(180deg,#d6ffe8,#9ff0c2)', boxShadow: '0 0 0 6px var(--correct), var(--pop)' };
-  else if (state === 'wrong') extra = { opacity: .45, boxShadow: '0 0 0 5px #ffb4b4, var(--pop)' };
-  else if (state === 'reveal') extra = { boxShadow: '0 0 0 6px var(--gold), var(--pop)', animation: 'glow-pulse 1.2s infinite' };
-  return { ...base, ...extra };
-}
-
-// ---------- LETTER CHOICE (also handles audio_to_letter) ----------
-function LetterChoice({ ex, onSolved, onWrong }) {
-  const { status, reveal, attempts, pick } = useChoice(ex.answer, onSolved, onWrong);
-  const isAudio = ex.type === 'audio_to_letter';
-  const target = isAudio ? ex.speak : ex.promptKey;
-  React.useEffect(() => { const t = setTimeout(() => window.speakHe(target), 500); return () => clearTimeout(t); }, []);
-  const coach = attempts.current >= 2 ? 'Here it is — tap the glowing one!' :
-                attempts.current === 1 ? 'Almost! Try again 💛'.replace('💛','') : '';
-  return (
-    <ExLayout
-      prompt={
-        isAudio
-          ? <div style={{ textAlign: 'center' }}>
-              <div style={{ fontSize: 24, fontWeight: 600, color: 'var(--ink-soft)', marginBottom: 18 }}>Which letter makes this sound?</div>
-              <AudioButton text={ex.speak} size={104} big />
-            </div>
-          : <div style={{ textAlign: 'center' }}>
-              <div style={{ fontSize: 26, fontWeight: 600, color: 'var(--ink-soft)', marginBottom: 10 }}>Find this letter</div>
-              <div className="he" style={{ fontSize: 150, lineHeight: 1, color: 'var(--grape-deep)' }}>{ex.promptKey}</div>
-              <div style={{ marginTop: 6 }}><AudioButton text={ex.promptKey} size={56} /></div>
-            </div>
-      }
-      coach={coach}
-    >
-      <CardGrid cols={4}>
-        {ex.options.map((o, i) => {
-          const st = status[o] || (reveal && o === ex.answer ? 'reveal' : null);
-          return (
-            <button key={i} onClick={() => { pick(o); if (o !== ex.answer) {} else {} }}
-              className={status[o] === 'wrong' ? 'wiggle' : st === 'correct' ? 'pop-in' : ''}
-              style={cardStyle(st, {
-                width: 130, height: 150, borderRadius: 'var(--r-md)', background: '#fff',
-                boxShadow: 'var(--pop)', display: 'grid', placeItems: 'center', transition: 'all .15s',
-              })}>
-              <span className="he" style={{ fontSize: 96, lineHeight: 1, color: 'var(--ink)' }}>{o}</span>
-            </button>
-          );
-        })}
-      </CardGrid>
-    </ExLayout>
-  );
-}
-
-// ---------- PICTURE TO WORD ----------
-function PictureToWord({ ex, onSolved, onWrong }) {
-  const { status, reveal, attempts, pick } = useChoice(ex.answer, onSolved, onWrong);
-  const w = WORDS[ex.answer];
-  const coach = attempts.current >= 1 ? 'Look at the picture and listen!' : '';
-  return (
-    <ExLayout
-      prompt={
-        <div style={{ textAlign: 'center' }}>
-          <div style={{ fontSize: 24, fontWeight: 600, color: 'var(--ink-soft)', marginBottom: 14 }}>Which word matches?</div>
-          <div style={{ width: 220, height: 220, borderRadius: 'var(--r-lg)', background: 'linear-gradient(180deg,#fff,#fff4dc)', boxShadow: 'var(--soft)', display: 'grid', placeItems: 'center', margin: '0 auto' }}>
-            <Icon name={ex.icon} size={150} />
-          </div>
-        </div>
-      }
-      coach={coach}
-    >
-      <CardGrid cols={ex.options.length > 3 ? 4 : 3}>
-        {ex.options.map((o, i) => {
-          const st = status[o] || (reveal && o === ex.answer ? 'reveal' : null);
-          return (
-            <button key={i} onClick={() => pick(o)}
-              className={status[o] === 'wrong' ? 'wiggle' : st === 'correct' ? 'pop-in' : ''}
-              style={cardStyle(st, { minWidth: 150, padding: '22px 10px', borderRadius: 'var(--r-md)', background: '#fff', boxShadow: 'var(--pop)', transition: 'all .15s' })}>
-              <div className="he" style={{ fontSize: 52, color: 'var(--ink)' }}>{WORDS[o] ? WORDS[o].plain : o}</div>
-            </button>
-          );
-        })}
-      </CardGrid>
-    </ExLayout>
-  );
-}
-
-// ---------- AUDIO TO WORD ----------
-function AudioToWord({ ex, onSolved, onWrong }) {
-  const { status, reveal, attempts, pick } = useChoice(ex.answer, onSolved, onWrong);
-  React.useEffect(() => { const t = setTimeout(() => window.speakHe(WORDS[ex.speakKey].plain), 500); return () => clearTimeout(t); }, []);
-  const coach = attempts.current >= 1 ? 'Tap the speaker to hear it again 🔊'.replace('🔊','') : '';
-  return (
-    <ExLayout
-      prompt={
-        <div style={{ textAlign: 'center' }}>
-          <div style={{ fontSize: 24, fontWeight: 600, color: 'var(--ink-soft)', marginBottom: 18 }}>Listen — which word is it?</div>
-          <AudioButton text={WORDS[ex.speakKey].plain} size={104} big />
-        </div>
-      }
-      coach={coach}
-    >
-      <CardGrid cols={3}>
-        {ex.options.map((o, i) => {
-          const st = status[o] || (reveal && o === ex.answer ? 'reveal' : null);
-          return (
-            <button key={i} onClick={() => pick(o)}
-              className={status[o] === 'wrong' ? 'wiggle' : st === 'correct' ? 'pop-in' : ''}
-              style={cardStyle(st, { minWidth: 150, padding: '22px 10px', borderRadius: 'var(--r-md)', background: '#fff', boxShadow: 'var(--pop)', transition: 'all .15s' })}>
-              <div className="he" style={{ fontSize: 52, color: 'var(--ink)' }}>{WORDS[o].plain}</div>
-            </button>
-          );
-        })}
-      </CardGrid>
-    </ExLayout>
-  );
-}
-
-// ---------- FILL MISSING WORD ----------
-function FillMissing({ ex, onSolved, onWrong }) {
-  const { status, reveal, attempts, pick } = useChoice(ex.blankAnswer, onSolved, onWrong);
-  const solved = Object.values(status).includes('correct');
-  return (
-    <ExLayout
-      prompt={
-        <div style={{ textAlign: 'center' }}>
-          <div style={{ fontSize: 24, fontWeight: 600, color: 'var(--ink-soft)', marginBottom: 18 }}>Finish the sentence</div>
-          <div className="he" dir="rtl" style={{ fontSize: 64, color: 'var(--ink)', display: 'flex', gap: 16, justifyContent: 'center', alignItems: 'center' }}>
-            <span>{ex.before}</span>
-            <span style={{ minWidth: 150, borderBottom: '6px dashed var(--grape)', color: 'var(--grape-deep)', padding: '0 12px' }}>
-              {solved ? WORDS[ex.blankAnswer].plain : '\u00A0'}
-            </span>
-          </div>
-        </div>
-      }
-      coach={attempts.current >= 1 ? 'Which word fits best?' : ''}
-    >
-      <CardGrid cols={3}>
-        {ex.options.map((o, i) => {
-          const st = status[o] || (reveal && o === ex.blankAnswer ? 'reveal' : null);
-          const label = WORDS[o] ? WORDS[o].plain : o;
-          return (
-            <button key={i} onClick={() => pick(o)}
-              className={status[o] === 'wrong' ? 'wiggle' : st === 'correct' ? 'pop-in' : ''}
-              style={cardStyle(st, { minWidth: 150, padding: '22px 10px', borderRadius: 'var(--r-md)', background: '#fff', boxShadow: 'var(--pop)', transition: 'all .15s' })}>
-              <div className="he" style={{ fontSize: 48, color: 'var(--ink)' }}>{label}</div>
-            </button>
-          );
-        })}
-      </CardGrid>
-    </ExLayout>
-  );
-}
-
-// ---------- BUILD WORD ----------
-function BuildWord({ ex, onSolved, onWrong }) {
-  const word = WORDS[ex.wordKey];
-  const letters = React.useMemo(() => Array.from(word.plain), [ex.wordKey]);
-  // tiles in RTL: first letter is rightmost. We store slots left->right = reversed reading? Keep logical order.
-  const [slots, setSlots] = React.useState(() => letters.map(() => null));
-  const [tiles, setTiles] = React.useState(() => shuffle(letters.map((ch, i) => ({ id: i, ch }))));
-  const [done, setDone] = React.useState(false);
-  const [bad, setBad] = React.useState(false);
-
-  React.useEffect(() => { const t = setTimeout(() => window.speakHe(word.plain), 500); return () => clearTimeout(t); }, []);
-
-  const placeNext = (tile) => {
-    if (done) return;
-    const idx = slots.findIndex(s => s === null);
-    if (idx === -1) return;
-    const next = [...slots]; next[idx] = tile;
-    setSlots(next); setTiles(tiles.filter(t => t.id !== tile.id)); window.chime('tap');
-    if (next.every(Boolean)) check(next);
-  };
-  const check = (filled) => {
-    const built = filled.map(t => t.ch).join('');
-    if (built === word.plain) { setDone(true); window.chime('correct'); setTimeout(() => onSolved && onSolved(), 800); }
-    else { setBad(true); window.chime('wrong'); onWrong && onWrong(1);
-      setTimeout(() => { setBad(false); setTiles(shuffle(letters.map((ch,i)=>({id:i,ch})))); setSlots(letters.map(()=>null)); }, 900); }
-  };
-  const removeSlot = (i) => {
-    if (done || !slots[i]) return;
-    const tile = slots[i]; const next = [...slots]; next[i] = null;
-    setSlots(next); setTiles([...tiles, tile]);
-  };
-  return (
-    <ExLayout
-      prompt={
-        <div style={{ textAlign: 'center' }}>
-          <div style={{ fontSize: 24, fontWeight: 600, color: 'var(--ink-soft)', marginBottom: 14 }}>Build the word</div>
-          <div style={{ width: 170, height: 170, borderRadius: 'var(--r-lg)', background: 'linear-gradient(180deg,#fff,#fff4dc)', boxShadow: 'var(--soft)', display: 'grid', placeItems: 'center', margin: '0 auto' }}>
-            <Icon name={word.icon} size={120} />
-          </div>
-          <div style={{ marginTop: 8 }}><AudioButton text={word.plain} size={52} /></div>
-        </div>
-      }
-      coach={bad ? 'Oops! Let\u2019s try the order again.' : 'Tap the letters in order →'}
-    >
-      {/* slots: render RTL so building reads right-to-left */}
-      <div dir="rtl" className={bad ? 'wiggle' : ''} style={{ display: 'flex', gap: 14, justifyContent: 'center', marginBottom: 30 }}>
-        {slots.map((s, i) => (
-          <button key={i} onClick={() => removeSlot(i)} style={{
-            width: 92, height: 110, borderRadius: 'var(--r-sm)',
-            background: s ? (done ? 'linear-gradient(180deg,#d6ffe8,#9ff0c2)' : '#fff') : 'rgba(124,92,240,.08)',
-            border: s ? 'none' : '3px dashed var(--grape)', boxShadow: s ? 'var(--pop)' : 'none',
-            display: 'grid', placeItems: 'center',
-          }}>
-            <span className="he" style={{ fontSize: 64, color: 'var(--ink)' }}>{s ? s.ch : ''}</span>
-          </button>
-        ))}
-      </div>
-      <div dir="rtl" style={{ display: 'flex', gap: 14, justifyContent: 'center', flexWrap: 'wrap', maxWidth: 600 }}>
-        {tiles.map(t => (
-          <button key={t.id} onClick={() => placeNext(t)} style={{
-            width: 84, height: 100, borderRadius: 'var(--r-sm)', background: 'linear-gradient(180deg,#ffce4a,#f7a823)',
-            boxShadow: '0 6px 0 rgba(0,0,0,.16)', display: 'grid', placeItems: 'center',
-          }}>
-            <span className="he" style={{ fontSize: 56, color: '#fff' }}>{t.ch}</span>
-          </button>
-        ))}
-      </div>
-    </ExLayout>
-  );
-}
-
-// ---------- SENTENCE ORDER ----------
-function SentenceOrder({ ex, onSolved, onWrong }) {
-  const correct = ex.words;
-  const [bank, setBank] = React.useState(() => shuffle(correct.map((w, i) => ({ id: i, w }))));
-  const [line, setLine] = React.useState([]);
-  const [done, setDone] = React.useState(false);
-  const [bad, setBad] = React.useState(false);
-
-  const add = (tok) => { if (done) return; setLine([...line, tok]); setBank(bank.filter(b => b.id !== tok.id)); window.chime('tap'); };
-  const back = (tok) => { if (done) return; setBank([...bank, tok]); setLine(line.filter(b => b.id !== tok.id)); };
-
+/* Picture, sound and copy games for children who are still learning to read.
+   Every delayed action is cancelled on exit, and refs guard rapid repeated taps. */
+function useExerciseTimers() {
+  const timers = React.useRef(new Set());
+  const alive = React.useRef(true);
   React.useEffect(() => {
-    if (line.length === correct.length) {
-      const ok = line.every((t, i) => t.w === correct[i]);
-      if (ok) { setDone(true); window.chime('correct'); window.speakHe(correct.join(' ')); setTimeout(() => onSolved && onSolved(), 1000); }
-      else { setBad(true); window.chime('wrong'); onWrong && onWrong(1);
-        setTimeout(() => { setBad(false); setBank(shuffle(correct.map((w,i)=>({id:i,w})))); setLine([]); }, 950); }
-    }
-  }, [line]);
-
-  return (
-    <ExLayout
-      prompt={
-        <div style={{ textAlign: 'center' }}>
-          <div style={{ fontSize: 24, fontWeight: 600, color: 'var(--ink-soft)', marginBottom: 8, whiteSpace: 'nowrap' }}>Put the words in order</div>
-          <div style={{ fontSize: 30, fontWeight: 600, color: 'var(--grape-deep)' }}>“{ex.en}”</div>
-        </div>
+    alive.current = true;
+    return () => { alive.current = false; timers.current.forEach(clearTimeout); timers.current.clear(); window.stopVoice?.(); };
+  }, []);
+  const later = React.useCallback((callback, delay) => {
+    const timer = setTimeout(() => { timers.current.delete(timer); if (alive.current) callback(); }, delay);
+    timers.current.add(timer); return timer;
+  }, []);
+  return { later, alive };
+}
+function useExerciseVoice(promptKey, target, followUp) {
+  React.useEffect(() => {
+    let active = true;
+    const timer = setTimeout(async () => {
+      const heard = await window.playPrompt?.(promptKey);
+      if (active && heard !== false && target) {
+        const spoken = await window.speakHe(target);
+        if (active && spoken !== false && followUp) await window.speakHe(followUp);
       }
-      coach={bad ? 'Close! Try a different order.' : 'Build the sentence from right to left →'}
-    >
-      {/* answer line (RTL) */}
-      <div dir="rtl" className={bad ? 'wiggle' : ''} style={{
-        minHeight: 110, width: 760, borderRadius: 'var(--r-md)',
-        background: done ? 'linear-gradient(180deg,#d6ffe8,#9ff0c2)' : 'rgba(124,92,240,.06)',
-        border: done ? 'none' : '3px dashed var(--grape)', display: 'flex', gap: 12, alignItems: 'center',
-        justifyContent: 'center', flexWrap: 'wrap', padding: 16, marginBottom: 28,
-      }}>
-        {line.length === 0 && <span style={{ color: 'var(--ink-faint)', fontSize: 20, fontFamily: 'var(--font-ui)' }}>tap words below…</span>}
-        {line.map(t => (
-          <button key={t.id} onClick={() => back(t)} style={tileStyle('#fff', 'var(--ink)')}>
-            <span className="he" style={{ fontSize: 42 }}>{t.w}</span>
-          </button>
-        ))}
-      </div>
-      <div dir="rtl" style={{ display: 'flex', gap: 14, justifyContent: 'center', flexWrap: 'wrap', maxWidth: 760 }}>
-        {bank.map(t => (
-          <button key={t.id} onClick={() => add(t)} style={tileStyle('linear-gradient(180deg,#a98bff,#7c5cf0)', '#fff')}>
-            <span className="he" style={{ fontSize: 42 }}>{t.w}</span>
-          </button>
-        ))}
-      </div>
-    </ExLayout>
-  );
+    }, 220);
+    return () => { active = false; clearTimeout(timer); window.stopVoice?.(); };
+  }, [promptKey, target, followUp]);
 }
-function tileStyle(bg, color) {
-  return { padding: '14px 24px', borderRadius: 'var(--r-sm)', background: bg, color, boxShadow: '0 6px 0 rgba(0,0,0,.14)' };
+function SpeakerGlyph({ size = 32 }) {
+  return <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3 9v6h4l5 5V4L7 9H3z"/><path d="M15 8a5 5 0 0 1 0 8m3-11a9 9 0 0 1 0 14" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/></svg>;
 }
-
-// ---------- shared layout: prompt up top, answers below, coach bottom-left ----------
-function ExLayout({ prompt, children, coach }) {
-  return (
-    <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 40, padding: '90px 40px 40px' }}>
-      <div>{prompt}</div>
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }}>{children}</div>
-      <Coach text={coach} mood={coach && /try|oops|close|almost/i.test(coach) ? 'think' : 'happy'} />
+function AudioButton({ text, promptKey, size = 64, big = false, label = 'Hear it again', disabled = false }) {
+  const [playing, setPlaying] = React.useState(false);
+  const { alive } = useExerciseTimers();
+  const sequence = React.useRef(0);
+  const play = async () => {
+    window.unlockAudio?.();
+    const run = ++sequence.current;
+    setPlaying(true);
+    try { if (promptKey) await window.playPrompt(promptKey); else await window.speakHe(text); }
+    finally { if (alive.current && sequence.current === run) setPlaying(false); }
+  };
+  return <button className={`audio-btn${playing ? ' audio-playing' : ''}${big ? ' audio-big' : ''}`} onClick={play} disabled={disabled} aria-label={label} aria-pressed={playing} style={{'--audio-size':`${Math.max(size,56)}px`}}><SpeakerGlyph size={big ? 46 : 30}/></button>;
+}
+function useChoice(answer, onSolved, onWrong) {
+  const [status, setStatus] = React.useState({});
+  const [done, setDone] = React.useState(false);
+  const [attempts, setAttempts] = React.useState(0);
+  const choice = React.useRef({done:false,wrong:new Set()});
+  const solved = React.useRef(onSolved); solved.current = onSolved;
+  const wrong = React.useRef(onWrong); wrong.current = onWrong;
+  const { later } = useExerciseTimers();
+  const pick = (value) => {
+    const current = choice.current;
+    if (current.done || current.wrong.has(value)) return;
+    window.unlockAudio?.();
+    if (value === answer) {
+      current.done = true; setDone(true); setStatus(s => ({...s,[value]:'correct'}));
+      window.chime('correct'); window.playPrompt?.('correct');
+      later(() => solved.current?.(), 850);
+    } else {
+      current.wrong.add(value); setStatus(s => ({...s,[value]:'wrong'}));
+      setAttempts(current.wrong.size); wrong.current?.(current.wrong.size);
+      window.chime('wrong'); window.playPrompt?.('try-again');
+    }
+  };
+  return {status,done,attempts,reveal:attempts > 0,pick};
+}
+function wordInfo(key) {
+  return WORDS[key] || Object.values(WORDS).find(w => w.plain === key) || {plain:key,icon:null,en:key};
+}
+function ScenePicture({ icons = [], emoji, large = false }) {
+  return <div className={`scene-picture${large ? ' large-scene' : ''}`} aria-hidden="true">{emoji ? <span className="scene-emoji">{emoji}</span> : icons.filter(Boolean).map((icon,i) => <Icon key={i} name={icon} size={icons.length > 2 ? 72 : 104}/>)}</div>;
+}
+function ChoiceMark({ state }) {
+  return state && <span className={`choice-mark ${state}`} aria-hidden="true">{state === 'correct' ? '✓' : state === 'wrong' ? '↻' : '☝'}</span>;
+}
+function ChoiceCard({ value, label, icon, emoji, state, disabled, onPick, previewText, letter = false }) {
+  return <div className={`answer-item${state ? ` answer-${state}` : ''}`}>
+    <button className={`choice-card${letter ? ' letter-card' : ''}`} onClick={() => onPick(value)} disabled={disabled || state === 'wrong'} aria-label={label || `Choose ${value}`}>
+      {icon && <Icon name={icon} size={94}/>} {emoji && <span className="choice-emoji" aria-hidden="true">{emoji}</span>}
+      <span className={`he${icon || emoji ? ' choice-word' : ' choice-letter'}`} lang="he">{wordInfo(value).plain}</span><ChoiceMark state={state}/>
+    </button>
+    {previewText && <AudioButton text={previewText} label={`Listen to ${label || value}`} size={56} disabled={disabled}/>}
+  </div>;
+}
+function CardGrid({ children, cols = 3 }) {
+  return <div className="answer-grid" style={{'--answer-cols':cols}}>{children}</div>;
+}
+function Coach({ attempts = 0, done = false }) {
+  return <div className="exercise-coach"><Mascot mood={done ? 'cheer' : attempts ? 'think' : 'happy'} size={78}/><span className={`coach-cue${done ? ' correct-cue' : ''}`} aria-hidden="true">{done ? '✓' : attempts ? '☝' : '✦'}</span></div>;
+}
+function ExLayout({ prompt, children, promptKey, attempts = 0, done = false }) {
+  return <section className="exercise-layout" aria-label="Hebrew learning activity">
+    <div className="exercise-guide"><AudioButton promptKey={promptKey} size={56} label="Hear how to play"/><span className="guide-symbols" aria-hidden="true">👀 <span>→</span> ☝</span></div>
+    <div className="exercise-prompt">{prompt}</div>
+    <div className="exercise-answers">{children}</div>
+    <Coach attempts={attempts} done={done}/>
+  </section>;
+}
+function LetterChoice({ ex, onSolved, onWrong }) {
+  const choice = useChoice(ex.answer,onSolved,onWrong);
+  const target = ex.model || ex.promptKey || ex.answer;
+  useExerciseVoice('instruction-letter',ex.speak || target);
+  return <ExLayout promptKey="instruction-letter" {...choice} prompt={<div className="letter-model"><span className="he model-glyph" lang="he">{target}</span><AudioButton text={ex.speak || target} size={72}/></div>}>
+    <CardGrid cols={4}>{ex.options.map(o => <ChoiceCard key={o} value={o} label={`Choose letter ${LETTERS[o]?.name || o}`} letter state={choice.status[o] || (choice.reveal && o === ex.answer ? 'reveal' : '')} disabled={choice.done} onPick={choice.pick}/>)}</CardGrid>
+  </ExLayout>;
+}
+function PictureToWord({ ex, onSolved, onWrong }) {
+  const choice = useChoice(ex.answer,onSolved,onWrong), word = wordInfo(ex.answer);
+  useExerciseVoice('instruction-picture',ex.answer);
+  return <ExLayout promptKey="instruction-picture" {...choice} prompt={<div className="picture-model"><ScenePicture icons={[ex.icon || word.icon]}/><span className="he model-word" lang="he">{word.plain}</span><AudioButton text={ex.answer}/></div>}>
+    <WordChoices ex={ex} choice={choice}/>
+  </ExLayout>;
+}
+function WordChoices({ ex, choice }) {
+  return <CardGrid cols={ex.options.length}>{ex.options.map(o => {
+    const word = wordInfo(o);
+    return <ChoiceCard key={o} value={o} label={`Choose ${word.en}`} icon={word.icon} previewText={o} state={choice.status[o] || (choice.reveal && o === ex.answer ? 'reveal' : '')} disabled={choice.done} onPick={choice.pick}/>;
+  })}</CardGrid>;
+}
+function AudioToWord({ ex, onSolved, onWrong }) {
+  const choice = useChoice(ex.answer,onSolved,onWrong);
+  const target = ex.speakKey || ex.answer;
+  useExerciseVoice('instruction-listen',target);
+  return <ExLayout promptKey="instruction-listen" {...choice} prompt={<div className="listen-model"><span className="listen-ears" aria-hidden="true">👂</span><AudioButton text={target} size={100} big/></div>}><WordChoices ex={ex} choice={choice}/></ExLayout>;
+}
+function FillMissing({ ex, onSolved, onWrong }) {
+  const choice = useChoice(ex.blankAnswer,onSolved,onWrong), word = wordInfo(ex.blankAnswer);
+  const model = ex.model || `${ex.before} ${ex.blankAnswer} ${ex.after || ''}`.trim();
+  useExerciseVoice('instruction-fill',model);
+  return <ExLayout promptKey="instruction-fill" {...choice} prompt={<div className="sentence-prompt"><ScenePicture icons={ex.sceneIcons || [ex.iconAnswer || word.icon]}/><div className="model-strip"><span className="he" lang="he">{model}</span><AudioButton text={model}/></div><div className="fill-line he" dir="rtl"><span>{ex.before}</span><span className={`fill-slot${choice.done ? ' slot-complete' : ''}`}>{choice.done ? word.plain : <Icon name={ex.iconAnswer || word.icon} size={48}/>}</span><span>{ex.after}</span></div></div>}>
+    <WordChoices ex={{...ex,answer:ex.blankAnswer}} choice={choice}/>
+  </ExLayout>;
+}
+// Copy activities show the next shape and only accept the matching token.
+// Incorrect taps leave the child's completed work in place.
+function useCopyTokens(tokens, onSolved, onWrong) {
+  const [filled,setFilled] = React.useState([]), [bad,setBad] = React.useState(null), [attempts,setAttempts] = React.useState(0), [done,setDone] = React.useState(false);
+  const state = React.useRef({filled:[],done:false,bad:new Set(),attempts:0});
+  const {later} = useExerciseTimers();
+  const solved = React.useRef(onSolved); solved.current = onSolved;
+  const wrong = React.useRef(onWrong); wrong.current = onWrong;
+  const add = (token) => {
+    const current = state.current;
+    if (current.done || current.filled.some(t => t.id === token.id) || current.bad.has(token.id)) return;
+    window.unlockAudio?.();
+    if (token.value !== tokens[current.filled.length].value) {
+      current.attempts++; current.bad.add(token.id); setAttempts(current.attempts); setBad(token.id);
+      wrong.current?.(current.attempts); window.chime('wrong'); window.playPrompt?.('try-again');
+      later(() => {current.bad.delete(token.id); setBad(b => b === token.id ? null : b);},650);
+      return;
+    }
+    current.filled = [...current.filled,token]; setFilled(current.filled); setBad(null); window.chime('tap');
+    if (current.filled.length === tokens.length) {
+      current.done = true; setDone(true); window.chime('correct'); window.playPrompt?.('correct'); later(() => solved.current?.(),850);
+    }
+  };
+  const undo = () => {const current = state.current; if (current.done || !current.filled.length) return; current.filled = current.filled.slice(0,-1); setFilled(current.filled); window.chime('tap');};
+  return {filled,bad,attempts,done,add,undo};
+}
+function BuildWord({ ex, onSolved, onWrong }) {
+  const word = wordInfo(ex.wordKey);
+  const tokens = React.useMemo(() => Array.from(word.plain).map((value,id) => ({value,id})),[ex.wordKey]);
+  const bank = React.useMemo(() => shuffle(tokens),[tokens]);
+  const copy = useCopyTokens(tokens,onSolved,onWrong);
+  useExerciseVoice('instruction-build',ex.wordKey);
+  return <ExLayout promptKey="instruction-build" {...copy} prompt={<div className="picture-model"><ScenePicture icons={[word.icon]}/><div className="model-strip"><span className="he model-word" lang="he">{word.plain}</span><AudioButton text={ex.wordKey}/></div></div>}>
+    <div className="copy-direction" aria-hidden="true">←</div>
+    <div className={`copy-slots letter-slots${copy.done ? ' slots-done' : ''}`} dir="rtl">
+      {tokens.map((token,i) => <div key={i} className={`copy-slot${copy.filled[i] ? ' has-token' : ''}${i === copy.filled.length ? ' next-slot' : ''}`}><span className="he">{copy.filled[i]?.value || (i === copy.filled.length ? token.value : '')}</span></div>)}
     </div>
-  );
+    <div className="copy-bank" dir="rtl">{bank.filter(t => !copy.filled.some(f => f.id === t.id)).map(token => <button key={token.id} className={`copy-tile letter-tile${copy.bad === token.id ? ' tile-wrong wiggle' : ''}${copy.attempts && token.value === tokens[copy.filled.length]?.value ? ' tile-help' : ''}`} disabled={copy.done} onClick={() => copy.add(token)} aria-label={`Add letter ${LETTERS[token.value]?.name || token.value}`}><span className="he">{token.value}</span></button>)}</div>
+    {copy.filled.length > 0 && !copy.done && <button className="icon-btn undo-button" onClick={copy.undo} aria-label="Undo last letter">↶</button>}
+  </ExLayout>;
 }
-
-function shuffle(a) { const r = [...a]; for (let i = r.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [r[i], r[j]] = [r[j], r[i]]; } return r; }
-
+function SentenceOrder({ ex, onSolved, onWrong }) {
+  const model = ex.model || ex.words.join(' ');
+  const tokens = React.useMemo(() => ex.words.map((value,id) => ({value,id})),[ex.words]);
+  const bank = React.useMemo(() => shuffle(tokens),[tokens]);
+  const copy = useCopyTokens(tokens,onSolved,onWrong);
+  useExerciseVoice('instruction-sentence',model);
+  const icons = ex.sceneIcons || ex.words.map(w => wordInfo(w).icon).filter(Boolean);
+  return <ExLayout promptKey="instruction-sentence" {...copy} prompt={<div className="sentence-prompt"><ScenePicture icons={icons}/><div className="model-strip sentence-model" dir="rtl"><span className="he" lang="he">{model}</span><AudioButton text={model}/></div></div>}>
+    <div className="copy-direction" aria-hidden="true">←</div>
+    <div className={`copy-slots sentence-slots${copy.done ? ' slots-done' : ''}`} dir="rtl">{tokens.map((token,i) => <div key={i} className={`copy-slot${copy.filled[i] ? ' has-token' : ''}${i === copy.filled.length ? ' next-slot' : ''}`}><span className="he">{copy.filled[i]?.value || (i === copy.filled.length ? token.value : '•••')}</span></div>)}</div>
+    <div className="copy-bank" dir="rtl">{bank.filter(t => !copy.filled.some(f => f.id === t.id)).map(token => <button key={token.id} className={`copy-tile word-tile${copy.bad === token.id ? ' tile-wrong wiggle' : ''}${copy.attempts && token.value === tokens[copy.filled.length]?.value ? ' tile-help' : ''}`} disabled={copy.done} onClick={() => copy.add(token)} aria-label={`Add ${token.value}`}><span className="he">{token.value}</span></button>)}</div>
+    {copy.filled.length > 0 && !copy.done && <button className="icon-btn undo-button" onClick={copy.undo} aria-label="Undo last word">↶</button>}
+  </ExLayout>;
+}
+function SoundChoice({ ex, onSolved, onWrong }) {
+  const choice = useChoice(ex.answer,onSolved,onWrong);
+  useExerciseVoice('instruction-sound',ex.speak || ex.answer);
+  return <ExLayout promptKey="instruction-sound" {...choice} prompt={<div className="letter-model"><span className="he model-glyph syllable-model">{ex.model || ex.answer}</span><AudioButton text={ex.speak || ex.answer} size={80}/></div>}><CardGrid cols={ex.options.length}>{ex.options.map(o => <ChoiceCard key={o} value={o} letter label={`Choose ${o}`} previewText={o} state={choice.status[o] || (choice.reveal && o === ex.answer ? 'reveal' : '')} disabled={choice.done} onPick={choice.pick}/>)}</CardGrid></ExLayout>;
+}
+function StoryChoice({ ex, onSolved, onWrong }) {
+  const choice = useChoice(ex.answer,onSolved,onWrong);
+  useExerciseVoice('instruction-story',ex.story,ex.speak);
+  return <ExLayout promptKey="instruction-story" {...choice} prompt={<div className="story-prompt"><ScenePicture icons={ex.sceneIcons} large/><div className="story-audio"><AudioButton text={ex.story} size={80} label="Listen to the story"/><span className="question-cue" aria-hidden="true">?</span><AudioButton text={ex.speak} size={64} label="Listen to the question"/></div></div>}><WordChoices ex={ex} choice={choice}/></ExLayout>;
+}
+function PhraseChoice({ ex, onSolved, onWrong }) {
+  const choice = useChoice(ex.answer,onSolved,onWrong);
+  useExerciseVoice('instruction-phrase',ex.speak);
+  return <ExLayout promptKey="instruction-phrase" {...choice} prompt={<div className="picture-model"><ScenePicture emoji={ex.sceneEmoji}/><AudioButton text={ex.speak} size={80}/></div>}><CardGrid cols={ex.options.length}>{ex.options.map(o => <ChoiceCard key={o} value={o} label={`Choose phrase ${o}`} emoji={ex.optionEmojis[o]} previewText={o} state={choice.status[o] || (choice.reveal && o === ex.answer ? 'reveal' : '')} disabled={choice.done} onPick={choice.pick}/>)}</CardGrid></ExLayout>;
+}
+function shuffle(items) { const result = [...items]; for (let i=result.length-1;i>0;i--) {const j=Math.floor(Math.random()*(i+1)); [result[i],result[j]]=[result[j],result[i]];} return result; }
 function ExerciseRenderer(props) {
-  const t = props.ex.type;
-  if (t === 'letter_choice' || t === 'audio_to_letter') return <LetterChoice {...props} />;
-  if (t === 'picture_to_word') return <PictureToWord {...props} />;
-  if (t === 'audio_to_word') return <AudioToWord {...props} />;
-  if (t === 'fill_missing') return <FillMissing {...props} />;
-  if (t === 'build_word') return <BuildWord {...props} />;
-  if (t === 'sentence_order') return <SentenceOrder {...props} />;
-  return <div style={{ padding: 40 }}>Unknown exercise: {t}</div>;
+  const renderers = {letter_choice:LetterChoice,audio_to_letter:LetterChoice,picture_to_word:PictureToWord,audio_to_word:AudioToWord,audio_to_picture:AudioToWord,fill_missing:FillMissing,build_word:BuildWord,sentence_order:SentenceOrder,sound_choice:SoundChoice,story_choice:StoryChoice,phrase_choice:PhraseChoice};
+  const Renderer = renderers[props.ex.type];
+  return Renderer ? <Renderer {...props}/> : <main className="exercise-layout" role="alert"><Mascot mood="think" size={100}/><p>This activity could not load. Return to the map and try another lesson.</p></main>;
 }
-
-Object.assign(window, { ExerciseRenderer, AudioButton });
+Object.assign(window,{ExerciseRenderer,AudioButton});

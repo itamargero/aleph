@@ -1,0 +1,15 @@
+/* Bundled SIL Open Font License fonts keep Hebrew vowel marks and UI readable offline. */
+@font-face {
+  font-family: 'Fredoka';
+  font-style: normal;
+  font-weight: 300 700;
+  font-display: swap;
+  src: url('/fonts/fredoka.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'Rubik';
+  font-style: normal;
+  font-weight: 300 900;
+  font-display: swap;
+  src: url('/fonts/rubik.ttf') format('truetype');
+}

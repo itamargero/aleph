@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 
-// The interactive Hebrew Heroes prototype is a static HTML page served from
-// public/. Redirect the root to it so the Next.js shell stays minimal.
+// The game is bundled locally with a complete offline resource manifest.
+// Its service worker also serves the cached HTML when opening / offline.
 export default function Home() {
   redirect("/hebrew-heroes.html");
 }

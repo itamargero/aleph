@@ -21,3 +21,9 @@ next-env.d.ts
 
 # Design source assets — kept for reference only, not needed at runtime.
 /design-reference/Hebrew teaching.zip
+
+# Generated runtime files and browser verification artifacts
+/public/game.js
+/public/sw.js
+/.playwright-cli/
+/output/
