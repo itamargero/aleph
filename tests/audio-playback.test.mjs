@@ -152,6 +152,40 @@ describe('Hebrew playback recovery', () => {
     expect(started).toHaveLength(1);
   });
 
+  test('unrelated input cannot dismiss a failed recording before its explicit retry', async () => {
+    const { window, started } = player({ bodyFailsOnce: true });
+    expect(await window.playPrompt('instruction')).toBe(false);
+    window.stopVoice(); // Automatic narration's click capture preserves retry.
+    await window.unlockAudio();
+    expect(window.HH_AUDIO.status).toBe('error');
+    expect(started).toHaveLength(0);
+    expect(await window.retryVoice()).toBe(true);
+    expect(window.HH_AUDIO.status).toBe('ready');
+  });
+
+  test('an interruption keeps its retry action until the interrupted recording is retried', async () => {
+    const { window, contexts, started } = player({ finishAutomatically: false });
+    const spoken = window.speakHe('אָלֶף');
+    await vi.waitFor(() => expect(started).toHaveLength(1));
+    contexts[0].state = 'interrupted';
+    contexts[0].onstatechange();
+    expect(await spoken).toBe(false);
+    await window.unlockAudio();
+    expect(window.HH_AUDIO.status).toBe('locked');
+  });
+
+  test('leaving a lesson cancels its retry target instead of replaying abandoned speech', async () => {
+    const { window, started } = player({ finishAutomatically: false });
+    const spoken = window.speakHe('אָלֶף');
+    await vi.waitFor(() => expect(started).toHaveLength(1));
+    window.stopSpeech();
+    expect(await spoken).toBe(false);
+    const retry = window.retryVoice();
+    await new Promise(resolve => setTimeout(resolve, 0));
+    expect(started).toHaveLength(1);
+    expect(await retry).toBe(true);
+  });
+
   test('an idle suspension does not replay a completed clip from a previous screen', async () => {
     const { window, contexts, started } = player();
     expect(await window.speakHe('אָלֶף')).toBe(true);

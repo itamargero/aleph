@@ -104,3 +104,13 @@ Evidence: the existing player never selected an Audio Session type. WebKit docum
 - 76 tests, ESLint, TypeScript, production build, and diff validation pass. Runtime `16604af6eb8543616eae`.
 - Hidden native Chromium verified 180 layout scenarios across all 25 lesson previews/first activities at 320px, notched 402px portrait, and 874px landscape with asymmetric safe areas. No controls were outside the usable width; settings remained inside the safe viewport. A follow-up touch audit caught and corrected letter-chip shrinkage; all tested buttons remain at least 56px.
 - A same-origin proxy served the complete previous production worker/assets, then switched to the new build: reset preserved exact localStorage and an unrelated cache entry, removed the old worker/download, and reached the latest Ready state with 184 resources. Real speech rendered online and after an offline cold reload (praise 4.293s, RMS peak 0.222); no page errors. This desktop engine verifies rendering, not the iPhone's physical Silent Mode routing. Report: `output/playwright/iphone-flow-report.json`.
+
+### Recording retry review follow-up
+
+- [x] Reproduce the review finding: a page-level unlock dismisses a failed clip's warning without retrying it.
+- [x] Preserve failed/interrupted recording actions across unrelated input; distinguish intentional navigation cancellation from recoverable stopping.
+- [ ] Verify capture-click retry, exit cancellation, complete checks, review, and production release.
+
+Regression tests failed for incidental input, interruption, and abandoned-lesson replay before the fix, then passed. Intentional unmount uses stopSpeech, which clears the retry target; automatic narration click capture retains stopVoice so the retry button can still replay a failed instruction.
+
+- Follow-up: 79 tests, lint, types, build, and diff checks pass. Hidden Chromium verifies a failed automatic instruction keeps its warning after Tab, its capture-phase retry plays exactly once, and exiting during praise prevents stale replay. No page errors. Runtime `e8c4c1c9848894a1e6dd`; evidence `output/playwright/retry-flow-report.json`.

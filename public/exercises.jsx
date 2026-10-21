@@ -5,7 +5,7 @@ function useExerciseTimers() {
   const alive = React.useRef(true);
   React.useEffect(() => {
     alive.current = true;
-    return () => { alive.current = false; timers.current.forEach(clearTimeout); timers.current.clear(); window.stopVoice?.(); };
+    return () => { alive.current = false; timers.current.forEach(clearTimeout); timers.current.clear(); window.stopSpeech?.(); };
   }, []);
   const later = React.useCallback((callback, delay) => {
     const timer = setTimeout(() => { timers.current.delete(timer); if (alive.current) callback(); }, delay);
@@ -34,7 +34,7 @@ function useExerciseVoice(promptKey, target, followUp) {
       window.stopVoice?.();
     };
     document.addEventListener('click', cancel, { capture: true, once: true });
-    return cancel;
+    return () => { cancel(); window.stopSpeech?.(); };
   }, [promptKey, target, followUp]);
 }
 function SpeakerGlyph({ size = 32 }) {

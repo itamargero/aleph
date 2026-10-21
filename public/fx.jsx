@@ -58,7 +58,7 @@ function unlockAudio() {
   const context = ac();
   if (!context) return Promise.resolve(false);
   if (context.state === 'running') {
-    if (!['playing', 'loading'].includes(window.HH_AUDIO.status)) audioState(window.HH_SOUND.voice ? 'ready' : 'muted');
+    idleAudioReady();
     return Promise.resolve(true);
   }
   // Each tap must call native resume again, even if a prior non-gesture
@@ -77,13 +77,18 @@ function unlockAudio() {
       new Promise((_, reject) => { timer = setTimeout(() => reject(new Error('Tap the speaker to turn on sound.')), 3000); }),
     ]).then(() => {
       if (context.state !== 'running') throw new Error('Tap the speaker to turn on sound.');
-      if (!['playing', 'loading'].includes(window.HH_AUDIO.status)) audioState(window.HH_SOUND.voice ? 'ready' : 'muted');
+      idleAudioReady();
       return true;
     }).catch(error => {
       if (context === _ac && context.state !== 'running') audioState('locked', error.message, window.HH_AUDIO.text);
       return false;
     }).finally(() => { clearTimeout(timer); });
   } catch (error) { audioState('locked', error.message, window.HH_AUDIO.text); return Promise.resolve(false); }
+}
+function idleAudioReady() {
+  // Page-level input can resume the native context without retrying a failed
+  // recording. Keep that recording's action until explicit retry or cancellation.
+  if (!_lastVoice && !['playing', 'loading'].includes(window.HH_AUDIO.status)) audioState('ready');
 }
 function stopVoice() {
   _voiceGeneration += 1;
@@ -94,6 +99,13 @@ function stopVoice() {
   }
   if (_finishVoice) { _finishVoice(false); _finishVoice = null; }
   if (['playing', 'loading'].includes(window.HH_AUDIO.status)) audioState(_ac?.state === 'running' ? 'ready' : 'locked');
+}
+function stopSpeech() {
+  // Navigation/unmount abandons the lesson; interruptions and click-capture
+  // takeover use stopVoice instead so a genuine recording failure can retry.
+  _lastVoice = null;
+  stopVoice();
+  audioState(_ac?.state === 'running' ? 'ready' : 'locked');
 }
 function normalizedSpeech(text) { return String(text || '').normalize('NFC').trim().replace(/\s+/g, ' '); }
 async function fetchVoiceAsset(url, format) {
@@ -238,4 +250,4 @@ if (!document.getElementById('confetti-kf')) {
   document.head.appendChild(s);
 }
 
-Object.assign(window, { speakHe, playPrompt, retryVoice, stopVoice, stopSpeech: stopVoice, unlockAudio, chime, Confetti });
+Object.assign(window, { speakHe, playPrompt, retryVoice, stopVoice, stopSpeech, unlockAudio, chime, Confetti });
