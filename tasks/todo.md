@@ -33,3 +33,24 @@ Complete all eight worlds using supported exercise types, visual story scenes, v
 - Apple Safari requires a user gesture to start audio; use a persistent Web Audio context unlocked by play/speaker taps. Local recordings avoid dependence on an installed speech voice.
 - WebKit can evict unused website storage; request persistence and give parents a concrete preflight reopen/speaker check. Prepare the Home Screen app separately because its storage may differ from Safari.
 - Keep the existing source engine and build locally rather than introduce a new backend or speech service. Upgrade the small Next.js shell to 16 and remove browser Babel/CDNs.
+
+
+# Web audio and Hebrew pronunciation repair
+
+- [x] Preserve the original checkout and establish a clean current-main baseline (27 tests pass).
+- [x] Reproduce audio recovery failures and identify the failed playback boundary (fresh deployed profiles played; suspended/closed contexts exposed recovery defects).
+- [x] Verify Hila neural Hebrew; compare Israwave samples; user selected Hila. Correct vowel models and labels.
+- [x] Add regression coverage, repair playback, and regenerate all 171 bundled recordings.
+- [ ] Verify Chromium, WebKit, offline playback, lint, types, production build, and review.
+
+## Approach
+
+Keep committed recordings and offline support. Trace audible sample data and browser playback separately. Replace the generation voice only after proving it produces usable Hebrew recordings. Preserve progress and curriculum access.
+
+## Review
+
+- 49 Vitest checks, ESLint, TypeScript, production build, and diff validation pass.
+- Chromium and mobile WebKit decode all 171 Hila recordings with nonzero signal; recorded words/instructions and offline cold reload/playback work with all 184 assets ready.
+- Reproduced and repaired closed/suspended context recovery, pending activation retry, queued state-change cancellation, retry gesture ordering, stale muted status, and praise truncation. Automatic narration yields to child interactions.
+- CodeRabbit initial review completed with one minor missing-tool diagnostic; fixed by checking ffmpeg/ffprobe before synthesis, with regression coverage.
+- Final focused browser regression and committed review pending. The original checkout's lockfile edit is preserved; production has not been changed.

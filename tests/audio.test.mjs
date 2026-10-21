@@ -1,11 +1,15 @@
 import { describe, expect, test } from 'vitest';
 import { readFile, stat } from 'node:fs/promises';
-import { AUDIO_PROMPTS, collectSpeech, loadCurriculum, normalizeSpeech } from '../scripts/generate-audio.mjs';
+import { AUDIO_CONFIG, AUDIO_PROMPTS, collectSpeech, loadCurriculum, normalizeSpeech } from '../scripts/generate-audio.mjs';
 
 const curriculum = loadCurriculum(await readFile(new URL('../public/data.js', import.meta.url), 'utf8'));
 const manifest = JSON.parse(await readFile(new URL('../public/audio/manifest.json', import.meta.url), 'utf8'));
 
 describe('bundled Hebrew voice for every activity', () => {
+  test('the shipped corpus uses the selected female Hebrew neural voice', () => {
+    expect(manifest).toMatchObject(AUDIO_CONFIG);
+  });
+
   test('parent metadata is excluded while teaching, names and exercise speech remain', () => {
     const parentText = 'Meet א through ז by copying and listening';
     const childText = 'בַּבַּיִת יֵשׁ כֶּלֶב.';

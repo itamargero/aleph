@@ -226,12 +226,13 @@ window.AREAS = [
     theme: 'meadow', icon: 'forest', blurb: 'Little marks & vowel sounds',
     levels: [
       {
-        id: 'nf-1', title: 'Ah and Eh', he: 'פַּתָּח וְסֶגוֹל',
-        objective: 'See and hear a and e vowel marks', teaches: ['בָּ','מַ','בֵּ','מֶ'],
+        id: 'nf-1', title: 'Ah and Eh', he: 'פַּתָּח, קָמָץ, סֶגוֹל וְצֵירֵי',
+        objective: 'See and hear a and e vowel marks', teaches: ['בַּ','מַ','בֶּ','מֶ','בָּ','בֵּ'],
         reward: { kind: 'sticker', icon: 'garden', label: 'Vowel Sprout' },
         exercises: [
-          vowel('בָּ', ['בִּ','בָּ','בֹּ']), vowel('מַ', ['מַ','מִ','מֶ']),
-          vowel('בֵּ', ['בָּ','בֻּ','בֵּ']), vowel('מֶ', ['מִ','מֶ','מֹ']),
+          vowel('בַּ', ['בִּ','בַּ','בֹּ']), vowel('מַ', ['מַ','מִ','מֶ']),
+          vowel('בֶּ', ['בַּ','בֻּ','בֶּ']), vowel('מֶ', ['מִ','מֶ','מֹ']),
+          vowel('בָּ', ['בִּ','בָּ','בֹּ']), vowel('בֵּ', ['בָּ','בֻּ','בֵּ']),
         ],
       },
       {
@@ -244,7 +245,7 @@ window.AREAS = [
         ],
       },
       {
-        id: 'nf-3', title: 'Oo and Joining Sounds', he: 'שׁוּרוּק וּשְׁוָא',
+        id: 'nf-3', title: 'Oo and Joining Sounds', he: 'קֻבּוּץ, שׁוּרוּק וּשְׁוָא',
         objective: 'Explore u marks and a short joining sound', teaches: ['בֻּ','שׁוּ','מוּ','שְׁמַע'],
         reward: { kind: 'sticker', icon: 'forest', label: 'Forest Sound Friend' },
         exercises: [

@@ -17,13 +17,24 @@ function useExerciseVoice(promptKey, target, followUp) {
   React.useEffect(() => {
     let active = true;
     const timer = setTimeout(async () => {
+      if (!active) return;
       const heard = await window.playPrompt?.(promptKey);
       if (active && heard !== false && target) {
         const spoken = await window.speakHe(target);
         if (active && spoken !== false && followUp) await window.speakHe(followUp);
       }
     }, 220);
-    return () => { active = false; clearTimeout(timer); window.stopVoice?.(); };
+    // A child's tap takes priority over automatic narration. Capture click
+    // before React's answer/speaker handler starts its own recording, including
+    // keyboard/assistive clicks, so a queued instruction cannot interrupt it.
+    const cancel = () => {
+      active = false;
+      clearTimeout(timer);
+      document.removeEventListener('click', cancel, true);
+      window.stopVoice?.();
+    };
+    document.addEventListener('click', cancel, { capture: true, once: true });
+    return cancel;
   }, [promptKey, target, followUp]);
 }
 function SpeakerGlyph({ size = 32 }) {
@@ -42,6 +53,21 @@ function AudioButton({ text, promptKey, size = 64, big = false, label = 'Hear it
   };
   return <button className={`audio-btn${playing ? ' audio-playing' : ''}${big ? ' audio-big' : ''}`} onClick={play} disabled={disabled} aria-label={label} aria-pressed={playing} style={{'--audio-size':`${Math.max(size,56)}px`}}><SpeakerGlyph size={big ? 46 : 30}/></button>;
 }
+// Keep the success recording intact before moving on. Use the exercise's
+// guarded timers so leaving the lesson cancels advancement; a stalled native
+// player must still allow the child to continue after a bounded wait.
+function finishAfterVoice(later, voice, callback) {
+  let pauseDone = false, voiceDone = false, finished = false;
+  const finish = () => {
+    if (finished || !pauseDone || !voiceDone) return;
+    finished = true;
+    later(callback, 0);
+  };
+  const heard = () => { voiceDone = true; finish(); };
+  later(() => { pauseDone = true; finish(); }, 850);
+  later(heard, 10000);
+  Promise.resolve(voice).then(heard, heard);
+}
 function useChoice(answer, onSolved, onWrong) {
   const [status, setStatus] = React.useState({});
   const [done, setDone] = React.useState(false);
@@ -56,8 +82,8 @@ function useChoice(answer, onSolved, onWrong) {
     window.unlockAudio?.();
     if (value === answer) {
       current.done = true; setDone(true); setStatus(s => ({...s,[value]:'correct'}));
-      window.chime('correct'); window.playPrompt?.('correct');
-      later(() => solved.current?.(), 850);
+      window.chime('correct');
+      finishAfterVoice(later, window.playPrompt?.('correct'), () => solved.current?.());
     } else {
       current.wrong.add(value); setStatus(s => ({...s,[value]:'wrong'}));
       setAttempts(current.wrong.size); wrong.current?.(current.wrong.size);
@@ -153,7 +179,8 @@ function useCopyTokens(tokens, onSolved, onWrong) {
     }
     current.filled = [...current.filled,token]; setFilled(current.filled); setBad(null); window.chime('tap');
     if (current.filled.length === tokens.length) {
-      current.done = true; setDone(true); window.chime('correct'); window.playPrompt?.('correct'); later(() => solved.current?.(),850);
+      current.done = true; setDone(true); window.chime('correct');
+      finishAfterVoice(later, window.playPrompt?.('correct'), () => solved.current?.());
     }
   };
   const undo = () => {const current = state.current; if (current.done || !current.filled.length) return; current.filled = current.filled.slice(0,-1); setFilled(current.filled); window.chime('tap');};
