@@ -178,7 +178,7 @@ function App() {
   const areaUnlocked = i => window.HH_PROGRESS.areaUnlocked(i, progress, save.unlockedAreas);
   const levelUnlocked = (area, i) => window.HH_PROGRESS.levelUnlocked(AREAS.indexOf(area), i, progress, save.unlockedAreas);
   const openLevel = (lv, idx = areaIdx) => { window.stopSpeech?.(); window.unlockAudio?.(); setAreaIdx(idx); setLevel(lv); setView('preview'); };
-  const start = () => { window.unlockAudio?.(); complete.current = false; setRun(value => value + 1); setView('session'); };
+  const start = () => { window.stopSpeech?.(); window.unlockAudio?.(); complete.current = false; setRun(value => value + 1); setView('session'); };
   const onComplete = (earnedStars, earnedCoins) => {
     if (complete.current) return;
     complete.current = true;
@@ -202,7 +202,7 @@ function App() {
     {view === 'map' && <WorldMap {...hud} progress={progress} areaUnlocked={areaUnlocked} onArea={i => { setAreaIdx(i); setView('area'); }}
       onPlay={() => { const recommended = window.HH_PROGRESS.next(progress); openLevel(recommended.level, recommended.areaIdx); }} />}
     {(view === 'area' || view === 'preview') && <AreaView {...hud} area={area} progress={progress} levelUnlocked={levelUnlocked} onLevel={lv => openLevel(lv)} onBack={map} />}
-    {view === 'preview' && level && <LevelPreview area={area} level={level} onStart={start} onBack={() => setView('area')} />}
+    {view === 'preview' && level && <LevelPreview area={area} level={level} onStart={start} onBack={() => { window.stopSpeech?.(); setView('area'); }} />}
     {view === 'session' && level && <ExerciseSession key={`${level.id}-${run}`} level={level} onComplete={onComplete} onExit={() => setView('area')} />}
     {view === 'complete' && <LevelComplete level={level} starsEarned={lastResult.stars} coinsEarned={lastResult.coins} hasNext={!!next} onReplay={start} onMap={map} onNext={goNext} />}
     {view === 'stickers' && <StickerBook stickers={stickers} coins={coins} stars={stars} onBack={map} />}

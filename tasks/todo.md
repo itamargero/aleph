@@ -96,7 +96,7 @@ Use a separate `/reset-offline.html` URL outside the offline asset list so an ol
 - [x] Request iOS playback audio-session mode before Web Audio initialization/resume; cover unsupported APIs and idle recovery.
 - [x] Make narrow headers/content fit and reserve dynamic-viewport safe areas; add translation opt-out directives.
 - [x] Verify complete mobile flows, offline reset/re-download, unit checks, lint, types, and build.
-- [ ] Complete code review and deploy the authorized fixes; record live evidence on the release PR.
+- [x] Complete code review and deploy the authorized fixes; record live evidence on the release PR.
 
 Evidence: the existing player never selected an Audio Session type. WebKit documents that its default ambient category follows Silent Mode even when sources play successfully; the playback category uses media audio. Before the fix, a production 320px viewport placed Parent settings at x294–350, outside the screen. Browser verification uses the dedicated Chromium headless-shell executable with automatic cleanup, avoiding Chrome.app/test popups.
 
@@ -114,3 +114,6 @@ Evidence: the existing player never selected an Audio Session type. WebKit docum
 Regression tests failed for incidental input, interruption, and abandoned-lesson replay before the fix, then passed. Intentional unmount uses stopSpeech, which clears the retry target; automatic narration click capture retains stopVoice so the retry button can still replay a failed instruction.
 
 - Follow-up: 79 tests, lint, types, build, and diff checks pass. Hidden Chromium verifies a failed automatic instruction keeps its warning after Tab, its capture-phase retry plays exactly once, and exiting during praise prevents stale replay. No page errors. Runtime `e8c4c1c9848894a1e6dd`; evidence `output/playwright/retry-flow-report.json`.
+
+- Production PR5 was deployed and the user confirmed that iPhone17/Chrome sound works with Silent Mode still enabled. PR6 subsequently deployed warning persistence and lesson-exit cancellation; production verified all184 asset hashes and online/offline voice rendering.
+- Preview exit was a separate missed cancellation path: injected failure followed by Close lesson preview retained a stale recording warning. The native headless regression failed before the fix and passed afterward. Closing the preview and starting a new run now explicitly abandon preview speech. All79 tests, lint, types, build, and diff checks pass; runtime `775bc517ea78a3e0caa2`.
