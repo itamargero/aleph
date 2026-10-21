@@ -63,7 +63,7 @@ Keep committed recordings and offline support. Trace audible sample data and bro
 - [x] Trace the reported kal/kol error to the recorded praise synthesis input.
 - [x] Compare Hila recordings with explicit /o/ vowel inputs against the existing /a/ recording and Israwave phonemes.
 - [x] Add a pronunciation-specific regression, keep canonical lesson spelling separate from synthesis hints, and regenerate affected clips.
-- [ ] Verify playback, full checks, code review, and update PR #3 preview.
+- [x] Verify playback, full checks, code review, and update PR #3 preview.
 
 The previous waveform checks established audible playback, not correct Hebrew vowels. This follow-up validates the reported vowel contrast directly.
 
@@ -73,3 +73,19 @@ The previous waveform checks established audible playback, not correct Hebrew vo
 - All 171 synthesis inputs audited. Corrected the plural imperative vowel in four choose prompts. The comparison found five affected recordings; the 166 other recordings and browser JavaScript remain byte-identical.
 - 53 tests, lint, TypeScript, production build, and diff validation pass. Manifest canonical aliases remain valid, and the five regenerated clips use new URLs. Runtime `526d6fef5139967a86d8`.
 - The user explicitly requested merging to production for their child to play. Production deployment verification follows the merge.
+- PR #3 merged as `d04fba3`; production at https://aleph-two.vercel.app serves the corrected recordings. Chrome and mobile WebKit verified real speaker playback, complete praise, all 184 cached resources, and offline cold reload with runtime `526d6fef5139967a86d8`. The pronunciation delta's CodeRabbit review completed without findings.
+
+## Reset airplane download without losing progress
+
+- [x] Add a network-only recovery page that old cached versions can open.
+- [x] Reset only Hebrew Heroes service-worker/cache storage after verifying network access; preserve local progress and unrelated storage.
+- [x] Link the recovery page from parent settings; explain returning online and preparing the download again.
+- [ ] Test failure/retry and old-worker recovery in browsers, then merge and verify production as requested.
+
+Use a separate `/reset-offline.html` URL outside the offline asset list so an old service worker cannot trap the reset flow. Require an explicit reset tap and a successful network-only check before clearing the game download. Keep localStorage unchanged. Stop after reset with a clear open-latest-game action and instructions to close other game tabs.
+
+### Reset verification
+
+- 67 tests, lint, TypeScript, production build, and diff validation pass. The recovery HTML and script return `Cache-Control: no-store, max-age=0` and bypass the worker; they are intentionally excluded from the offline asset list.
+- Chrome and mobile WebKit verified offline settings refusal without removing the download, online recovery navigation, removal of only the game worker/cache, byte-identical saved progress, preservation of unrelated storage/cache, and a fresh 184-resource download with successful praise playback. Local runtime `3b76f65ef5c3e2bc9911`; no page errors. Reports: `output/playwright/reset-local-{chrome,webkit}-report.json`.
+- Production rollout is authorized. Existing production browser contexts retain the previous worker and seeded progress for a live old-download recovery check after deployment.

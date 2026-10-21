@@ -91,6 +91,7 @@ function useDialog(ref, onClose) {
 function Settings({ snd, onChange, onClose, onReset, saved }) {
   const offline = useOffline();
   const [confirmReset, setConfirmReset] = React.useState(false);
+  const [downloadResetError, setDownloadResetError] = React.useState('');
   const [holding, setHolding] = React.useState(false);
   const resetTimer = React.useRef(null);
   const dialog = React.useRef(null);
@@ -119,6 +120,12 @@ function Settings({ snd, onChange, onClose, onReset, saved }) {
           {offline.status === 'error' && <><p>The download was interrupted. Connect to Wi-Fi and try again.</p><button className="btn sun" onClick={() => window.prepareOffline?.()}>↻ Retry download</button></>}
           {offline.status === 'preparing' && <progress value={offline.completed} max={offline.total || 1} aria-label="Offline download progress" />}
           <p>On iPad: Safari → Share → Add to Home Screen. Open that icon while online and wait for the green airplane check there too. Before leaving, switch on airplane mode, reopen the game, and tap a speaker.</p>
+          <p>To replace an old download, connect to Wi-Fi or mobile data. Resetting the airplane download keeps stars and stickers.</p>
+          <button className="btn sun" onClick={() => {
+            if (navigator.onLine === false) setDownloadResetError('Connect to Wi-Fi or mobile data before resetting the airplane download.');
+            else window.location.assign('/reset-offline.html');
+          }}>↻ Reset airplane download</button>
+          {downloadResetError && <p role="alert">{downloadResetError}</p>}
           <p>Progress stays on this device. Keep the game installed and avoid clearing Safari website data.</p>
         </div>
         {!saved && <p role="alert">Your device could not save progress. Play still works, but keep this tab open to retain this session.</p>}
