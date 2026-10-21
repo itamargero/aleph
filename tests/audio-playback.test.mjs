@@ -7,11 +7,11 @@ const { code } = await transform(await readFile(new URL('../public/fx.jsx', impo
 
 // Model native Web Audio state transitions; decoding and rendering are also
 // exercised in Chromium/WebKit against the real committed recordings.
-function player({ state = 'suspended', resumeStalls = false, resumeFirstStalls = false, resumeSuspensionEvent = false, bodyStalls = false, bodyFailsOnce = false, finishAutomatically = true } = {}) {
+function player({ state = 'suspended', resumeStalls = false, resumeFirstStalls = false, resumeSuspensionEvent = false, bodyStalls = false, bodyFailsOnce = false, finishAutomatically = true, audioSession = { type: 'ambient' } } = {}) {
   const contexts = [];
   const started = [];
   class AudioContext {
-    constructor() { this.state = state; this.sampleRate = 44100; this.destination = {}; contexts.push(this); }
+    constructor() { this.state = state; this.sampleRate = 44100; this.destination = {}; this.sessionTypeAtCreation = audioSession?.type; contexts.push(this); }
     resume() {
       this.resumeCount = (this.resumeCount || 0) + 1;
       if (resumeFirstStalls && this.resumeCount === 1) return new Promise(() => {});
@@ -29,7 +29,7 @@ function player({ state = 'suspended', resumeStalls = false, resumeFirstStalls =
     }
     decodeAudioData() { return Promise.resolve({ voice: true }); }
   }
-  const window = { AudioContext, dispatchEvent() {} };
+  const window = { AudioContext, navigator: { audioSession }, dispatchEvent() {} };
   const document = { getElementById: () => true };
   const fetch = (_url, { signal } = {}) => {
     if (_url.endsWith('.json')) return Promise.resolve({ ok: true, json: async () => ({ entries: { 'אָלֶף': { text: 'אָלֶף', url: '/audio/alef.mp3' } }, prompts: { instruction: { text: 'אָלֶף', url: '/audio/alef.mp3' } } }) });
@@ -45,6 +45,45 @@ function player({ state = 'suspended', resumeStalls = false, resumeFirstStalls =
 afterEach(() => vi.useRealTimers());
 
 describe('Hebrew playback recovery', () => {
+  test('iPhone speech requests the media playback session before constructing native audio', async () => {
+    const audioSession = { type: 'ambient' };
+    const { window, contexts, started } = player({ audioSession });
+    expect(await window.speakHe('אָלֶף')).toBe(true);
+    expect(audioSession.type).toBe('playback');
+    expect(contexts[0].sessionTypeAtCreation).toBe('playback');
+    expect(started).toHaveLength(1);
+  });
+
+  test('a fresh tap restores the playback category even when native audio is already running', async () => {
+    const audioSession = { type: 'ambient' };
+    const { window } = player({ state: 'running', audioSession });
+    await window.unlockAudio();
+    audioSession.type = 'ambient';
+    await window.unlockAudio();
+    expect(audioSession.type).toBe('playback');
+  });
+
+  test('browsers without Audio Session still play their bundled recordings', async () => {
+    const { window } = player({ audioSession: null });
+    expect(await window.speakHe('אָלֶף')).toBe(true);
+  });
+
+  test('a browser rejecting the optional playback category still uses normal audio', async () => {
+    const audioSession = { get type() { return 'ambient'; }, set type(_value) { throw new Error('Unsupported category'); } };
+    const { window } = player({ audioSession });
+    expect(await window.speakHe('אָלֶף')).toBe(true);
+  });
+
+  test('a native idle recovery clears the stale sound-paused warning', async () => {
+    const { window, contexts } = player();
+    await window.unlockAudio();
+    contexts[0].state = 'interrupted';
+    contexts[0].onstatechange();
+    contexts[0].state = 'running';
+    expect(await window.retryVoice()).toBe(true);
+    expect(window.HH_AUDIO.status).toBe('ready');
+  });
+
   test('a speaker request resumes audio without relying on a previous global tap', async () => {
     const { window, contexts, started } = player();
     expect(await window.speakHe('אָלֶף')).toBe(true);
@@ -138,5 +177,15 @@ describe('Hebrew playback recovery', () => {
     expect(await window.speakHe('אָלֶף')).toBe(false);
     expect(window.HH_AUDIO.status).toBe('muted');
     expect(started).toHaveLength(0);
+  });
+
+  test('native resume and interruption keep muted voice routed to sound settings', async () => {
+    const { window, contexts } = player();
+    window.HH_SOUND.voice = false;
+    await window.unlockAudio();
+    expect(window.HH_AUDIO.status).toBe('muted');
+    contexts[0].state = 'interrupted';
+    contexts[0].onstatechange();
+    expect(window.HH_AUDIO.status).toBe('muted');
   });
 });

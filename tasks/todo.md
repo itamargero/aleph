@@ -89,3 +89,18 @@ Use a separate `/reset-offline.html` URL outside the offline asset list so an ol
 - 67 tests, lint, TypeScript, production build, and diff validation pass. The recovery HTML and script return `Cache-Control: no-store, max-age=0` and bypass the worker; they are intentionally excluded from the offline asset list.
 - Chrome and mobile WebKit verified offline settings refusal without removing the download, online recovery navigation, removal of only the game worker/cache, byte-identical saved progress, preservation of unrelated storage/cache, and a fresh 184-resource download with successful praise playback. Local runtime `3b76f65ef5c3e2bc9911`; no page errors. Reports: `output/playwright/reset-local-{chrome,webkit}-report.json`.
 - Production rollout is authorized. Existing production browser contexts retain the previous worker and seeded progress for a live old-download recovery check after deployment.
+
+## iPhone silent audio, mobile fit, and browser translation
+
+- [x] Inspect live production and native audio behavior; reproduce clipped controls in a headless-only browser.
+- [x] Request iOS playback audio-session mode before Web Audio initialization/resume; cover unsupported APIs and idle recovery.
+- [x] Make narrow headers/content fit and reserve dynamic-viewport safe areas; add translation opt-out directives.
+- [x] Verify complete mobile flows, offline reset/re-download, unit checks, lint, types, and build.
+- [ ] Complete code review and deploy the authorized fixes; record live evidence on the release PR.
+
+Evidence: the existing player never selected an Audio Session type. WebKit documents that its default ambient category follows Silent Mode even when sources play successfully; the playback category uses media audio. Before the fix, a production 320px viewport placed Parent settings at x294–350, outside the screen. Browser verification uses the dedicated Chromium headless-shell executable with automatic cleanup, avoiding Chrome.app/test popups.
+
+- The user confirmed Silent Mode is enabled on the affected iPhone. Playback is requested before native audio initialization and on subsequent taps; unsupported or rejected Audio Session APIs keep normal playback working. Muted voice remains a settings action through native state changes.
+- 76 tests, ESLint, TypeScript, production build, and diff validation pass. Runtime `16604af6eb8543616eae`.
+- Hidden native Chromium verified 180 layout scenarios across all 25 lesson previews/first activities at 320px, notched 402px portrait, and 874px landscape with asymmetric safe areas. No controls were outside the usable width; settings remained inside the safe viewport. A follow-up touch audit caught and corrected letter-chip shrinkage; all tested buttons remain at least 56px.
+- A same-origin proxy served the complete previous production worker/assets, then switched to the new build: reset preserved exact localStorage and an unrelated cache entry, removed the old worker/download, and reached the latest Ready state with 184 resources. Real speech rendered online and after an offline cold reload (praise 4.293s, RMS peak 0.222); no page errors. This desktop engine verifies rendering, not the iPhone's physical Silent Mode routing. Report: `output/playwright/iphone-flow-report.json`.

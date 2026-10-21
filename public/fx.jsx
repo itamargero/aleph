@@ -18,10 +18,22 @@ const _decodedVoice = new Map();
 window.HH_AUDIO = { status: 'locked', error: '', text: '' };
 
 function audioState(status, error = '', text = '') {
+  // Device audio changes must not replace the settings action when a parent
+  // has turned Hebrew voice off. SFX can still use the same native context.
+  if (!window.HH_SOUND.voice) { status = 'muted'; error = ''; }
   window.HH_AUDIO = { status, error, text };
   window.dispatchEvent(new CustomEvent('hh-audio', { detail: window.HH_AUDIO }));
 }
 function ac() {
+  // iOS defaults Web Audio to the ambient/ringer channel, which can be silent
+  // even while sources report successful playback. Request the media channel
+  // before creating/resuming audio, including after an OS audio-session reset.
+  // Other browsers may omit or reject this optional API; normal playback stays
+  // available there, without a silent looping media element or background audio.
+  try {
+    const session = window.navigator?.audioSession;
+    if (session && session.type !== 'playback') session.type = 'playback';
+  } catch (_) { /* Audio Session is optional; native resume remains the fallback. */ }
   if (!_ac || _ac.state === 'closed') {
     try {
       const Context = window.AudioContext || window.webkitAudioContext;
@@ -45,7 +57,10 @@ function ac() {
 function unlockAudio() {
   const context = ac();
   if (!context) return Promise.resolve(false);
-  if (context.state === 'running') return Promise.resolve(true);
+  if (context.state === 'running') {
+    if (!['playing', 'loading'].includes(window.HH_AUDIO.status)) audioState(window.HH_SOUND.voice ? 'ready' : 'muted');
+    return Promise.resolve(true);
+  }
   // Each tap must call native resume again, even if a prior non-gesture
   // attempt is still pending (touch activation can arrive after pointerdown).
   // Resume and start a silent frame synchronously in the user gesture. Native
@@ -62,7 +77,7 @@ function unlockAudio() {
       new Promise((_, reject) => { timer = setTimeout(() => reject(new Error('Tap the speaker to turn on sound.')), 3000); }),
     ]).then(() => {
       if (context.state !== 'running') throw new Error('Tap the speaker to turn on sound.');
-      if (!['playing', 'loading'].includes(window.HH_AUDIO.status)) audioState('ready');
+      if (!['playing', 'loading'].includes(window.HH_AUDIO.status)) audioState(window.HH_SOUND.voice ? 'ready' : 'muted');
       return true;
     }).catch(error => {
       if (context === _ac && context.state !== 'running') audioState('locked', error.message, window.HH_AUDIO.text);

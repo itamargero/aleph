@@ -156,7 +156,10 @@ function App() {
   React.useEffect(() => { setSaveOkay(window.HH_PROGRESS.store(save)); }, [save]);
   React.useEffect(() => {
     window.HH_SOUND.sfx = snd.sfx; window.HH_SOUND.voice = snd.voice;
-    if (!snd.voice) window.stopSpeech?.();
+    if (!snd.voice) {
+      window.stopSpeech?.();
+      setAudioIssue({ status: 'muted' });
+    }
     else setAudioIssue(current => current?.status === 'muted' ? null : current);
     document.getElementById('stage').classList.toggle('reduce-motion', snd.reduce);
   }, [snd]);
