@@ -159,3 +159,12 @@ describe('complete, playable Hebrew curriculum', () => {
     }
   });
 });
+
+
+describe('accurate Hebrew vowel models', () => {
+  it('patach and segol lessons use those exact marks for both consonants', () => {
+    const level = levels.find(level => level.id === 'nf-1');
+    expect(level.teaches).toEqual(['בַּ', 'מַ', 'בֶּ', 'מֶ', 'בָּ', 'בֵּ']);
+    expect(level.exercises.map(exercise => exercise.answer)).toEqual(level.teaches);
+  });
+});

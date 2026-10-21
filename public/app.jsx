@@ -141,7 +141,7 @@ function App() {
   const [run, setRun] = React.useState(0);
   const [lastResult, setLastResult] = React.useState({ stars: 0, coins: 0 });
   const [showSettings, setShowSettings] = React.useState(false);
-  const [audioError, setAudioError] = React.useState(false);
+  const [audioIssue, setAudioIssue] = React.useState(null);
   const complete = React.useRef(false);
   const { progress, coins, stickers, snd } = save;
   const stars = Object.values(progress).reduce((total, count) => total + count, 0);
@@ -150,11 +150,15 @@ function App() {
   React.useEffect(() => {
     window.HH_SOUND.sfx = snd.sfx; window.HH_SOUND.voice = snd.voice;
     if (!snd.voice) window.stopSpeech?.();
+    else setAudioIssue(current => current?.status === 'muted' ? null : current);
     document.getElementById('stage').classList.toggle('reduce-motion', snd.reduce);
   }, [snd]);
   React.useEffect(() => {
     const unlock = () => window.unlockAudio?.();
-    const audio = event => setAudioError(event.detail?.status === 'error');
+    const audio = event => {
+      const issue = event.detail;
+      setAudioIssue(issue?.status === 'error' || issue?.status === 'muted' || (issue?.status === 'locked' && issue.error) ? issue : null);
+    };
     document.addEventListener('pointerdown', unlock, { passive: true });
     document.addEventListener('keydown', unlock);
     window.addEventListener('hh-audio', audio);
@@ -194,7 +198,12 @@ function App() {
     {view === 'stickers' && <StickerBook stickers={stickers} coins={coins} stars={stars} onBack={map} />}
     {showSettings && <Settings snd={snd} saved={saveOkay} onClose={closeSettings} onChange={(key, value) => setSave(current => ({ ...current, snd: { ...current.snd, [key]: value } }))}
       onReset={() => { window.stopSpeech?.(); setSave(window.HH_PROGRESS.normalize(null)); setShowSettings(false); setLevel(null); setView('map'); }} />}
-    {audioError && <button className="audio-warning" onClick={() => { window.unlockAudio?.(); setAudioError(false); }}>🔊 Tap a speaker to try sound again</button>}
+    {audioIssue && <button className="audio-warning" aria-live="polite"
+      onPointerDown={event => event.stopPropagation()} onKeyDown={event => event.stopPropagation()}
+      onClick={() => {
+      if (audioIssue.status === 'muted') setShowSettings(true);
+      else window.retryVoice?.();
+    }}>{audioIssue.status === 'muted' ? '🔇 Hebrew voice is off. Open sound settings' : '🔊 Sound paused. Tap to try again'}</button>}
   </>;
 }
 

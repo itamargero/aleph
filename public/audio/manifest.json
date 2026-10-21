@@ -1,891 +1,898 @@
 {
-  "voice": "Carmit (he-IL)",
-  "rate": 145,
+  "engine": "edge-tts",
+  "voice": "he-IL-HilaNeural",
+  "rate": "-15%",
+  "version": 1,
+  "provenance": {
+    "generator": "https://github.com/rany2/edge-tts",
+    "voices": "https://learn.microsoft.com/en-us/azure/ai-services/speech-service/language-support",
+    "pronunciationReview": "Native Hebrew speaker review is still needed for educational pronunciation, especially isolated syllables."
+  },
   "entries": {
     "א": {
-      "url": "/audio/0d7a9dd8e23839541861.mp3",
+      "url": "/audio/e3a7ac60038df0ed2072.mp3",
       "text": "אָלֶף"
     },
     "אֲגַם הַצְּלִילִים": {
-      "url": "/audio/e0d77e1a02981b73ab66.mp3",
+      "url": "/audio/690b83fe43d68fd65015.mp3",
       "text": "אֲגַם הַצְּלִילִים"
     },
     "אוֹכֶלֶת": {
-      "url": "/audio/1dbb58a15382acc1d82c.mp3",
+      "url": "/audio/f623df30f2bc72673a9e.mp3",
       "text": "אוֹכֶלֶת"
     },
     "אוֹתִיּוֹת סוֹפִיּוֹת": {
-      "url": "/audio/1cb22bd92bb3a8b9ba82.mp3",
+      "url": "/audio/704d628544aca8f52d49.mp3",
       "text": "אוֹתִיּוֹת סוֹפִיּוֹת"
     },
     "אוֹתִיּוֹת רִאשׁוֹנוֹת": {
-      "url": "/audio/7a30b63e1e3a836b89fd.mp3",
+      "url": "/audio/600c9e1b81eec1620c4a.mp3",
       "text": "אוֹתִיּוֹת רִאשׁוֹנוֹת"
     },
-    "אֵיזוֹ מִלָּה חֲסֵרָה? הַקְשִׁיבוּ, וּבִחֲרוּ אֶת הַתְּשׁוּבָה.": {
-      "url": "/audio/ab847cbaed50fa21677d.mp3",
-      "text": "אֵיזוֹ מִלָּה חֲסֵרָה? הַקְשִׁיבוּ, וּבִחֲרוּ אֶת הַתְּשׁוּבָה."
+    "אֵיזוֹ מִלָּה חֲסֵרָה? הַקְשִׁיבוּ, וּבַחֲרוּ אֶת הַתְּשׁוּבָה.": {
+      "url": "/audio/fbe7982e6d1ffb1bd5d5.mp3",
+      "text": "אֵיזוֹ מִלָּה חֲסֵרָה? הַקְשִׁיבוּ, וּבַחֲרוּ אֶת הַתְּשׁוּבָה."
     },
     "אֵיפֹה הַכֶּלֶב וְהֶחָתוּל?": {
-      "url": "/audio/c59077d99d357390251c.mp3",
+      "url": "/audio/209a63549b5a02c47485.mp3",
       "text": "אֵיפֹה הַכֶּלֶב וְהֶחָתוּל?"
     },
     "אֵיפֹה הַשֵּׁרוּתִים?": {
-      "url": "/audio/7a464e68ec6aa00b7e7b.mp3",
+      "url": "/audio/43b60770439465d84d78.mp3",
       "text": "אֵיפֹה הַשֵּׁרוּתִים?"
     },
     "אֹכֶל טָעִים": {
-      "url": "/audio/877a0c428e2b0beb3500.mp3",
+      "url": "/audio/9ba629bfbb466d6dd92d.mp3",
       "text": "אֹכֶל טָעִים"
     },
     "אָלֶף": {
-      "url": "/audio/0d7a9dd8e23839541861.mp3",
+      "url": "/audio/e3a7ac60038df0ed2072.mp3",
       "text": "אָלֶף"
     },
     "אֲנִי": {
-      "url": "/audio/02c2a3d7f11bbbb4b371.mp3",
+      "url": "/audio/c2efa0c751392b983d8b.mp3",
       "text": "אֲנִי"
     },
     "אֲנִי אוֹכֶלֶת": {
-      "url": "/audio/4352b20765c67434a226.mp3",
+      "url": "/audio/2ece436531df63a94a05.mp3",
       "text": "אֲנִי אוֹכֶלֶת"
     },
     "אֲנִי אוֹכֶלֶת בָּנָנָה": {
-      "url": "/audio/df749b163d6628bf99e2.mp3",
+      "url": "/audio/69b29dd09ccc155b1a5a.mp3",
       "text": "אֲנִי אוֹכֶלֶת בָּנָנָה"
     },
     "אֲנִי אוֹכֶלֶת לֶחֶם": {
-      "url": "/audio/e31317dfaf6ed057a55d.mp3",
+      "url": "/audio/6171cd53da1f69f736e5.mp3",
       "text": "אֲנִי אוֹכֶלֶת לֶחֶם"
     },
     "אֲנִי אוֹכֶלֶת תַּפּוּחַ": {
-      "url": "/audio/5ee5f2b6b6d665fc7e13.mp3",
+      "url": "/audio/68339c8b68339ada7df0.mp3",
       "text": "אֲנִי אוֹכֶלֶת תַּפּוּחַ"
     },
     "אֲנִי צְמֵאָה": {
-      "url": "/audio/663a980175cde786bdb3.mp3",
+      "url": "/audio/861a3838cb41484a3842.mp3",
       "text": "אֲנִי צְמֵאָה"
     },
     "אֲנִי קוֹרֵאת סֵפֶר": {
-      "url": "/audio/ece958bc460f6ffc949b.mp3",
+      "url": "/audio/671c0be160779d1f422e.mp3",
       "text": "אֲנִי קוֹרֵאת סֵפֶר"
     },
     "אֲנִי רוֹאֶה": {
-      "url": "/audio/10324c32a699d03d530e.mp3",
+      "url": "/audio/66b5b8f85d358950e2a2.mp3",
       "text": "אֲנִי רוֹאֶה"
     },
     "אֲנִי רוֹאָה": {
-      "url": "/audio/4baf13b7e2ec208b3323.mp3",
+      "url": "/audio/906a7a2bb9fda0522c1b.mp3",
       "text": "אֲנִי רוֹאָה"
     },
     "אֲנִי רוֹאֶה דָּג": {
-      "url": "/audio/6aac7d2aa674778f50b7.mp3",
+      "url": "/audio/6386825c690990737bf0.mp3",
       "text": "אֲנִי רוֹאֶה דָּג"
     },
     "אֲנִי רוֹאֶה חָתוּל": {
-      "url": "/audio/0a9c974eedf452a616e9.mp3",
+      "url": "/audio/88eda2f23786e50c5e3e.mp3",
       "text": "אֲנִי רוֹאֶה חָתוּל"
     },
     "אֲנִי רוֹאָה צִפּוֹר": {
-      "url": "/audio/e4185bf5b5a773096a88.mp3",
+      "url": "/audio/6e8c26c0d2ad0a9e03ca.mp3",
       "text": "אֲנִי רוֹאָה צִפּוֹר"
     },
     "אֲנִי רוֹצָה לְשַׂחֵק": {
-      "url": "/audio/35112c1f63fa298f72af.mp3",
+      "url": "/audio/a0e95dadd911268a5c9b.mp3",
       "text": "אֲנִי רוֹצָה לְשַׂחֵק"
     },
     "אֲנִי רְעֵבָה": {
-      "url": "/audio/6c9287f104ebd60cf158.mp3",
+      "url": "/audio/5da7ead0e1db7f79822a.mp3",
       "text": "אֲנִי רְעֵבָה"
     },
     "אֲנִי שׁוֹתָה": {
-      "url": "/audio/f2a13748bec33ccee591.mp3",
+      "url": "/audio/af7853b74dfb486078ed.mp3",
       "text": "אֲנִי שׁוֹתָה"
     },
     "אֲנִי שׁוֹתָה חָלָב": {
-      "url": "/audio/3206af038dd94865b55f.mp3",
+      "url": "/audio/c94e990ea41a1486e4c9.mp3",
       "text": "אֲנִי שׁוֹתָה חָלָב"
     },
     "ב": {
-      "url": "/audio/2f4427a9b58bdf46265a.mp3",
+      "url": "/audio/7d5c07a1145c0dd112ae.mp3",
       "text": "בֵּית"
     },
     "בִּ": {
-      "url": "/audio/c82cfd2c202055070c86.mp3",
+      "url": "/audio/d76be8fb6a864d40167c.mp3",
       "text": "בִּ"
     },
     "בֵּ": {
-      "url": "/audio/4276ead82c09c505eae0.mp3",
+      "url": "/audio/1475cb935c4ef46650ab.mp3",
       "text": "בֵּ"
     },
     "בֶּ": {
-      "url": "/audio/c4280b77a6b8b7e1e20f.mp3",
+      "url": "/audio/c9640150d8fab9214b2a.mp3",
       "text": "בֶּ"
     },
     "בַּ": {
-      "url": "/audio/7b5f808066569375e67d.mp3",
+      "url": "/audio/d84fc317bead6539449f.mp3",
       "text": "בַּ"
     },
     "בָּ": {
-      "url": "/audio/fc441e0f532ac35ae673.mp3",
+      "url": "/audio/fd889efd67f79576b34e.mp3",
       "text": "בָּ"
     },
     "בֹּ": {
-      "url": "/audio/27d717f119beb2b5a509.mp3",
+      "url": "/audio/0c68cfd49c83afbb50ee.mp3",
       "text": "בֹּ"
     },
     "בֻּ": {
-      "url": "/audio/233af42cfba3098821dc.mp3",
+      "url": "/audio/9772fb29bdcd40e3db34.mp3",
       "text": "בֻּ"
     },
     "בַּבֹּקֶר הַשֶּׁמֶשׁ זוֹרַחַת. הַכֶּלֶב וְהֶחָתוּל בַּבַּיִת.": {
-      "url": "/audio/dd446f0faa6ebcb28c98.mp3",
+      "url": "/audio/0134dab067b70c66eff0.mp3",
       "text": "בַּבֹּקֶר הַשֶּׁמֶשׁ זוֹרַחַת. הַכֶּלֶב וְהֶחָתוּל בַּבַּיִת."
     },
     "בְּבַקָּשָׁה": {
-      "url": "/audio/8721e88b54d96a41e1c2.mp3",
+      "url": "/audio/d892507ede97c2e4fb3d.mp3",
       "text": "בְּבַקָּשָׁה"
     },
     "בַּגַּן יֵשׁ צִפּוֹר וְסוּס. בָּאֲגַם יֵשׁ דָּג. הַיְלָדָה יוֹשֶׁבֶת וְקוֹרֵאת סֵפֶר.": {
-      "url": "/audio/d5b07a40dae2f3e82d90.mp3",
+      "url": "/audio/446bc9eab737bacbac06.mp3",
       "text": "בַּגַּן יֵשׁ צִפּוֹר וְסוּס. בָּאֲגַם יֵשׁ דָּג. הַיְלָדָה יוֹשֶׁבֶת וְקוֹרֵאת סֵפֶר."
     },
     "בּוֹאוּ נִבְנֶה מִלָּה. גְּעוּ בָּאוֹתִיּוֹת לְפִי הַסֵּדֶר, מִיָּמִין לִשְׂמֹאל.": {
-      "url": "/audio/18f5e48992cb8ceae14b.mp3",
+      "url": "/audio/026c3497bf5121172bc2.mp3",
       "text": "בּוֹאוּ נִבְנֶה מִלָּה. גְּעוּ בָּאוֹתִיּוֹת לְפִי הַסֵּדֶר, מִיָּמִין לִשְׂמֹאל."
     },
     "בּוֹאוּ נִבְנֶה מִשְׁפָּט. גְּעוּ בַּמִּלִּים לְפִי הַסֵּדֶר, מִיָּמִין לִשְׂמֹאל.": {
-      "url": "/audio/bdc20da159df2e5f8fa0.mp3",
+      "url": "/audio/8313d2b5b6077950f90f.mp3",
       "text": "בּוֹאוּ נִבְנֶה מִשְׁפָּט. גְּעוּ בַּמִּלִּים לְפִי הַסֵּדֶר, מִיָּמִין לִשְׂמֹאל."
     },
     "בּוֹאוּ נְנַסֶּה שׁוּב. הַקְשִׁיבוּ וְגְּעוּ בַּתְּשׁוּבָה.": {
-      "url": "/audio/1df6c8126f876228ea50.mp3",
+      "url": "/audio/132815623bc4dad81915.mp3",
       "text": "בּוֹאוּ נְנַסֶּה שׁוּב. הַקְשִׁיבוּ וְגְּעוּ בַּתְּשׁוּבָה."
     },
     "בית": {
-      "url": "/audio/9e91a5c22e4df4891b0b.mp3",
+      "url": "/audio/84341ebcb879d0920ba2.mp3",
       "text": "בַּיִת"
     },
     "בֵּית": {
-      "url": "/audio/2f4427a9b58bdf46265a.mp3",
+      "url": "/audio/7d5c07a1145c0dd112ae.mp3",
       "text": "בֵּית"
     },
     "בַּיִת": {
-      "url": "/audio/9e91a5c22e4df4891b0b.mp3",
+      "url": "/audio/84341ebcb879d0920ba2.mp3",
       "text": "בַּיִת"
     },
     "בַּיִת וְשֶׁמֶשׁ": {
-      "url": "/audio/7f03f123ee363e397b3d.mp3",
+      "url": "/audio/c5d95e89f2d77f40d44d.mp3",
       "text": "בַּיִת וְשֶׁמֶשׁ"
     },
     "בננה": {
-      "url": "/audio/e7bcbf4797e9f5040b26.mp3",
+      "url": "/audio/b36a9051a38581907557.mp3",
       "text": "בָּנָנָה"
     },
     "בָּנָנָה": {
-      "url": "/audio/e7bcbf4797e9f5040b26.mp3",
+      "url": "/audio/b36a9051a38581907557.mp3",
       "text": "בָּנָנָה"
     },
     "בֹּקֶר טוֹב": {
-      "url": "/audio/5c4973496d1b49db34c1.mp3",
+      "url": "/audio/bf2740d2b2f3b6c20f7c.mp3",
       "text": "בֹּקֶר טוֹב"
     },
     "בֹּקֶר שִׁמְשִׁי": {
-      "url": "/audio/e4f814983d74b879a896.mp3",
+      "url": "/audio/c8079b4c1db792325a03.mp3",
       "text": "בֹּקֶר שִׁמְשִׁי"
     },
     "ג": {
-      "url": "/audio/68ae824ca8d61d606eea.mp3",
+      "url": "/audio/1d855cc2d4f01a136d87.mp3",
       "text": "גִּימֶל"
     },
     "גִּימֶל": {
-      "url": "/audio/68ae824ca8d61d606eea.mp3",
+      "url": "/audio/1d855cc2d4f01a136d87.mp3",
       "text": "גִּימֶל"
     },
     "גַּן הַמִּלִּים": {
-      "url": "/audio/17ca486486b5193e0b8c.mp3",
+      "url": "/audio/a7732ea3dc4e62a89030.mp3",
       "text": "גַּן הַמִּלִּים"
     },
     "גֶּשֶׁר הַמִּשְׁפָּטִים": {
-      "url": "/audio/3978468b3c55c7924c4d.mp3",
+      "url": "/audio/029b01f489de1425d250.mp3",
       "text": "גֶּשֶׁר הַמִּשְׁפָּטִים"
     },
     "ד": {
-      "url": "/audio/c7372f730e91712173f4.mp3",
+      "url": "/audio/07629a5abc105bcf4052.mp3",
       "text": "דָּלֶת"
     },
     "דג": {
-      "url": "/audio/cfa2749b92483545c07a.mp3",
+      "url": "/audio/c4133966b827967abd08.mp3",
       "text": "דָּג"
     },
     "דָּג": {
-      "url": "/audio/cfa2749b92483545c07a.mp3",
+      "url": "/audio/c4133966b827967abd08.mp3",
       "text": "דָּג"
     },
     "דָּלֶת": {
-      "url": "/audio/c7372f730e91712173f4.mp3",
+      "url": "/audio/07629a5abc105bcf4052.mp3",
       "text": "דָּלֶת"
     },
     "ה": {
-      "url": "/audio/97015a7509a9b037beed.mp3",
+      "url": "/audio/6e1cb6f6fd7ce95eb40d.mp3",
       "text": "הֵא"
     },
     "הֵא": {
-      "url": "/audio/97015a7509a9b037beed.mp3",
+      "url": "/audio/6e1cb6f6fd7ce95eb40d.mp3",
       "text": "הֵא"
     },
     "הִגִּיעַ זְמַן לִישׁוֹן. בּוֹאוּ נֹאמַר לַיְלָה טוֹב.": {
-      "url": "/audio/45ce809bcbd6de9e4ae7.mp3",
+      "url": "/audio/bf6783c80fc652af6121.mp3",
       "text": "הִגִּיעַ זְמַן לִישׁוֹן. בּוֹאוּ נֹאמַר לַיְלָה טוֹב."
     },
     "הִגִּיעַ זְמַן לְשַׂחֵק. אֶפְשָׁר לוֹמַר אֲנִי רוֹצָה לְשַׂחֵק.": {
-      "url": "/audio/ea10510f52542cbef1a1.mp3",
+      "url": "/audio/32a1b3455d0e283bb901.mp3",
       "text": "הִגִּיעַ זְמַן לְשַׂחֵק. אֶפְשָׁר לוֹמַר אֲנִי רוֹצָה לְשַׂחֵק."
     },
     "הַהַרְפַּתְקָה שֶׁלִּי בְּעִבְרִית": {
-      "url": "/audio/6e8747a09065af5b6316.mp3",
+      "url": "/audio/7d7ab4def5188008f619.mp3",
       "text": "הַהַרְפַּתְקָה שֶׁלִּי בְּעִבְרִית"
     },
     "הַחָבֵר הוֹלֵךְ הַבַּיְתָה. בּוֹאוּ נֹאמַר לְהִתְרָאוֹת.": {
-      "url": "/audio/d831a589cf86b145429d.mp3",
+      "url": "/audio/a0c0c8d6bf117873ddce.mp3",
       "text": "הַחָבֵר הוֹלֵךְ הַבַּיְתָה. בּוֹאוּ נֹאמַר לְהִתְרָאוֹת."
     },
     "הַיֶּלֶד": {
-      "url": "/audio/b3e44d7b0cec30297cdb.mp3",
+      "url": "/audio/54950aeec981784fddcc.mp3",
       "text": "הַיֶּלֶד"
     },
     "הַיֶּלֶד קוֹרֵא סֵפֶר": {
-      "url": "/audio/dfde8a51850846f319df.mp3",
+      "url": "/audio/e970d36349022cb697fd.mp3",
       "text": "הַיֶּלֶד קוֹרֵא סֵפֶר"
     },
     "הַיְלָדָה אוֹכֶלֶת תַּפּוּחַ וּבָנָנָה. עַל הַשֻּׁלְחָן יֵשׁ לֶחֶם וְחָלָב.": {
-      "url": "/audio/e9573c634b364fcb8ed9.mp3",
+      "url": "/audio/1d5858b3f2af8b10d261.mp3",
       "text": "הַיְלָדָה אוֹכֶלֶת תַּפּוּחַ וּבָנָנָה. עַל הַשֻּׁלְחָן יֵשׁ לֶחֶם וְחָלָב."
     },
-    "הַקְשִׁיבוּ הֵיטֵב, וּבִחֲרוּ אֶת הַתְּשׁוּבָה.": {
-      "url": "/audio/e7ffaa90cac93f631fac.mp3",
-      "text": "הַקְשִׁיבוּ הֵיטֵב, וּבִחֲרוּ אֶת הַתְּשׁוּבָה."
+    "הַקְשִׁיבוּ הֵיטֵב, וּבַחֲרוּ אֶת הַתְּשׁוּבָה.": {
+      "url": "/audio/92aa493a8a01205e7a4b.mp3",
+      "text": "הַקְשִׁיבוּ הֵיטֵב, וּבַחֲרוּ אֶת הַתְּשׁוּבָה."
     },
     "הַקְשִׁיבוּ לַמִּלָּה, וְגְּעוּ בַּתְּמוּנָה הַמַּתְאִימָה.": {
-      "url": "/audio/cda1c68ab74c3c2e9ce7.mp3",
+      "url": "/audio/19e4ca76788bda7fadd9.mp3",
       "text": "הַקְשִׁיבוּ לַמִּלָּה, וְגְּעוּ בַּתְּמוּנָה הַמַּתְאִימָה."
     },
-    "הַקְשִׁיבוּ לַסִּפּוּר, וּבִחֲרוּ אֶת הַתְּמוּנָה הַמַּתְאִימָה.": {
-      "url": "/audio/854df97cca2defa70459.mp3",
-      "text": "הַקְשִׁיבוּ לַסִּפּוּר, וּבִחֲרוּ אֶת הַתְּמוּנָה הַמַּתְאִימָה."
+    "הַקְשִׁיבוּ לַסִּפּוּר, וּבַחֲרוּ אֶת הַתְּמוּנָה הַמַּתְאִימָה.": {
+      "url": "/audio/58a1867ffc4f9aaf3818.mp3",
+      "text": "הַקְשִׁיבוּ לַסִּפּוּר, וּבַחֲרוּ אֶת הַתְּמוּנָה הַמַּתְאִימָה."
     },
     "הַקְשִׁיבוּ לַצְּלִיל, וְגְּעוּ בַּסִּימָן הַמַּתְאִים.": {
-      "url": "/audio/a030d2044656394e9dcb.mp3",
+      "url": "/audio/e575ec39c69a8d5528dd.mp3",
       "text": "הַקְשִׁיבוּ לַצְּלִיל, וְגְּעוּ בַּסִּימָן הַמַּתְאִים."
     },
-    "הַקְשִׁיבוּ, וּבִחֲרוּ אֶת הַמִּלִּים הַמַּתְאִימוֹת.": {
-      "url": "/audio/2b2ce98b5e0e6153006b.mp3",
-      "text": "הַקְשִׁיבוּ, וּבִחֲרוּ אֶת הַמִּלִּים הַמַּתְאִימוֹת."
+    "הַקְשִׁיבוּ, וּבַחֲרוּ אֶת הַמִּלִּים הַמַּתְאִימוֹת.": {
+      "url": "/audio/98e6d8d86fc1b014891b.mp3",
+      "text": "הַקְשִׁיבוּ, וּבַחֲרוּ אֶת הַמִּלִּים הַמַּתְאִימוֹת."
     },
     "הַקְשִׁיבוּ, וְגְּעוּ בָּאוֹת הַמַּתְאִימָה.": {
-      "url": "/audio/29933b08a10587b24aae.mp3",
+      "url": "/audio/2999a3af3428a039e61a.mp3",
       "text": "הַקְשִׁיבוּ, וְגְּעוּ בָּאוֹת הַמַּתְאִימָה."
     },
     "הַר הָאֶתְגָּר": {
-      "url": "/audio/23dfd17bf9f8b4b05d42.mp3",
+      "url": "/audio/3b9f774a7afd93340e34.mp3",
       "text": "הַר הָאֶתְגָּר"
     },
     "הַשֶּׁמֶשׁ זוֹרַחַת. אֲנִי קוֹרֵאת סֵפֶר.": {
-      "url": "/audio/1e4a71868ea1e43448b6.mp3",
+      "url": "/audio/92070d9e07487105c8e4.mp3",
       "text": "הַשֶּׁמֶשׁ זוֹרַחַת. אֲנִי קוֹרֵאת סֵפֶר."
     },
     "הַשֶּׁמֶשׁ זוֹרַחַת. בּוֹאוּ נֹאמַר בֹּקֶר טוֹב.": {
-      "url": "/audio/03258f0e2600e1563b70.mp3",
+      "url": "/audio/c81736110b7f3cbe0e55.mp3",
       "text": "הַשֶּׁמֶשׁ זוֹרַחַת. בּוֹאוּ נֹאמַר בֹּקֶר טוֹב."
     },
     "ו": {
-      "url": "/audio/f965220b051e9f0720aa.mp3",
+      "url": "/audio/64b41381ec07b142b32a.mp3",
       "text": "וָו"
     },
     "וָו": {
-      "url": "/audio/f965220b051e9f0720aa.mp3",
+      "url": "/audio/64b41381ec07b142b32a.mp3",
       "text": "וָו"
     },
     "ז": {
-      "url": "/audio/bc997b3b5e27f3e782c6.mp3",
+      "url": "/audio/0a272c8629013d546ee4.mp3",
       "text": "זַיִן"
     },
     "זֶה": {
-      "url": "/audio/c6fadcc70ec62ad6db73.mp3",
+      "url": "/audio/12f240af572c3686f251.mp3",
       "text": "זֶה"
     },
     "זֶה בַּיִת": {
-      "url": "/audio/173ea098a8247603eb4a.mp3",
+      "url": "/audio/9688af4d2db59993281a.mp3",
       "text": "זֶה בַּיִת"
     },
     "זֶה כֶּלֶב": {
-      "url": "/audio/9d7313b5ec329334ee5a.mp3",
+      "url": "/audio/45571d3a2f8dc6ce6fa5.mp3",
       "text": "זֶה כֶּלֶב"
     },
     "זוֹ": {
-      "url": "/audio/82604cdba9964c218525.mp3",
+      "url": "/audio/fee810d0023092def99c.mp3",
       "text": "זוֹ"
     },
     "זוֹ שֶׁמֶשׁ": {
-      "url": "/audio/23e2d7f536293a2d5be0.mp3",
+      "url": "/audio/067945606b95ca39c764.mp3",
       "text": "זוֹ שֶׁמֶשׁ"
     },
     "זַיִן": {
-      "url": "/audio/bc997b3b5e27f3e782c6.mp3",
+      "url": "/audio/0a272c8629013d546ee4.mp3",
       "text": "זַיִן"
     },
     "ח": {
-      "url": "/audio/87c1e6bbe773fde26c2a.mp3",
+      "url": "/audio/b195f8713f50a52258af.mp3",
       "text": "חֵית"
     },
     "חֲבֵרִים מִן הַחַי": {
-      "url": "/audio/359f46614c5c7e084af7.mp3",
+      "url": "/audio/0b1b0f58e6a4483250e4.mp3",
       "text": "חֲבֵרִים מִן הַחַי"
     },
     "חוֹזְרִים עַל אוֹתִיּוֹת": {
-      "url": "/audio/1d09867a390850ad5886.mp3",
+      "url": "/audio/5a0440c2bc18d378c039.mp3",
       "text": "חוֹזְרִים עַל אוֹתִיּוֹת"
     },
     "חוֹזְרִים עַל מִלִּים": {
-      "url": "/audio/3b8a3b23ae289280f093.mp3",
+      "url": "/audio/ed202345090049475314.mp3",
       "text": "חוֹזְרִים עַל מִלִּים"
     },
     "חִירִיק וְחוֹלָם": {
-      "url": "/audio/526f1e6f805f8506fcdb.mp3",
+      "url": "/audio/436c9dbbd252daabedc8.mp3",
       "text": "חִירִיק וְחוֹלָם"
     },
     "חֵית": {
-      "url": "/audio/87c1e6bbe773fde26c2a.mp3",
+      "url": "/audio/b195f8713f50a52258af.mp3",
       "text": "חֵית"
     },
     "חלב": {
-      "url": "/audio/410272ac8e2aff9d41c9.mp3",
+      "url": "/audio/2f00364cdd1dfea1d40c.mp3",
       "text": "חָלָב"
     },
     "חָלָב": {
-      "url": "/audio/410272ac8e2aff9d41c9.mp3",
+      "url": "/audio/2f00364cdd1dfea1d40c.mp3",
       "text": "חָלָב"
     },
     "חתול": {
-      "url": "/audio/4e85a65d21e40a2b38b4.mp3",
+      "url": "/audio/b700d1f2d636da2e8fb3.mp3",
       "text": "חָתוּל"
     },
     "חָתוּל": {
-      "url": "/audio/4e85a65d21e40a2b38b4.mp3",
+      "url": "/audio/b700d1f2d636da2e8fb3.mp3",
       "text": "חָתוּל"
     },
     "ט": {
-      "url": "/audio/fd355b70524e8a2ec2e7.mp3",
+      "url": "/audio/8c8ef06c8726cc58d4df.mp3",
       "text": "טֵית"
     },
     "טִירַת הַסִּפּוּרִים": {
-      "url": "/audio/feed74f018206528ea05.mp3",
+      "url": "/audio/b70589859fee51ea600f.mp3",
       "text": "טִירַת הַסִּפּוּרִים"
     },
     "טֵית": {
-      "url": "/audio/fd355b70524e8a2ec2e7.mp3",
+      "url": "/audio/8c8ef06c8726cc58d4df.mp3",
       "text": "טֵית"
     },
     "י": {
-      "url": "/audio/7ce23f26b4ee553bfef8.mp3",
+      "url": "/audio/4d2560e3d21a7f711567.mp3",
       "text": "יוּד"
     },
     "יוּד": {
-      "url": "/audio/7ce23f26b4ee553bfef8.mp3",
+      "url": "/audio/4d2560e3d21a7f711567.mp3",
       "text": "יוּד"
     },
     "יוֹם בַּגַּן": {
-      "url": "/audio/9f8fd0fbba8029755313.mp3",
+      "url": "/audio/1469ec9a7fa4b8ba438c.mp3",
       "text": "יוֹם בַּגַּן"
     },
     "יַעַר הַנִּקּוּד": {
-      "url": "/audio/56fefebbb1333f6ad18a.mp3",
+      "url": "/audio/bd7e99ccf83f8717eb03.mp3",
       "text": "יַעַר הַנִּקּוּד"
     },
     "כ": {
-      "url": "/audio/96c272d494272fa3ff66.mp3",
+      "url": "/audio/776a15e910caa7a4802e.mp3",
       "text": "כַּף"
     },
     "ך": {
-      "url": "/audio/e231b3fc33ca41a31a30.mp3",
+      "url": "/audio/4e5e3397b9c0f644736f.mp3",
       "text": "כַּף סוֹפִית"
     },
     "כָּל הַכָּבוֹד! הִצְלַחְתֶּם!": {
-      "url": "/audio/ec43a737f858b5ae071d.mp3",
-      "text": "כָּל הַכָּבוֹד! הִצְלַחְתֶּם!"
+      "url": "/audio/49c9edd7a4862a55454d.mp3",
+      "text": "כֹּל הַכָּבוֹד! הִצְלַחְתֶּם!"
     },
     "כלב": {
-      "url": "/audio/cd5e70bdc14212ce99b9.mp3",
+      "url": "/audio/0213195dcb37e74f1195.mp3",
       "text": "כֶּלֶב"
     },
     "כֶּלֶב": {
-      "url": "/audio/cd5e70bdc14212ce99b9.mp3",
+      "url": "/audio/0213195dcb37e74f1195.mp3",
       "text": "כֶּלֶב"
     },
     "כֵּן": {
-      "url": "/audio/ab9bc2c59762ee4171a6.mp3",
+      "url": "/audio/bfa0b1c58ddf6f3cf5a8.mp3",
       "text": "כֵּן"
     },
     "כַּף": {
-      "url": "/audio/96c272d494272fa3ff66.mp3",
+      "url": "/audio/776a15e910caa7a4802e.mp3",
       "text": "כַּף"
     },
     "כַּף סוֹפִית": {
-      "url": "/audio/e231b3fc33ca41a31a30.mp3",
+      "url": "/audio/4e5e3397b9c0f644736f.mp3",
       "text": "כַּף סוֹפִית"
     },
     "כְּפַר אָלֶף": {
-      "url": "/audio/b02f8c6766b27080a06f.mp3",
+      "url": "/audio/59f70e2c91ba873cc885.mp3",
       "text": "כְּפַר אָלֶף"
     },
     "ל": {
-      "url": "/audio/a683c3025025f56e33c7.mp3",
+      "url": "/audio/cadd7108cf89a952f911.mp3",
       "text": "לָמֶד"
     },
     "לֹא": {
-      "url": "/audio/52a68781446bd77df85b.mp3",
+      "url": "/audio/5ea168d204342cb98a2a.mp3",
       "text": "לֹא"
     },
     "לְהִתְרָאוֹת": {
-      "url": "/audio/9e05b5a971d28dd1a6a4.mp3",
+      "url": "/audio/83d6302dcb19a1e46016.mp3",
       "text": "לְהִתְרָאוֹת"
     },
     "לחם": {
-      "url": "/audio/e2c84d8c1a3d93674468.mp3",
+      "url": "/audio/71691bb4a9f2e338d0d1.mp3",
       "text": "לֶחֶם"
     },
     "לֶחֶם": {
-      "url": "/audio/e2c84d8c1a3d93674468.mp3",
+      "url": "/audio/71691bb4a9f2e338d0d1.mp3",
       "text": "לֶחֶם"
     },
     "לַיְלָה טוֹב": {
-      "url": "/audio/0de184a12e6204e552b5.mp3",
+      "url": "/audio/799785111602aeb66c85.mp3",
       "text": "לַיְלָה טוֹב"
     },
     "לָמֶד": {
-      "url": "/audio/a683c3025025f56e33c7.mp3",
+      "url": "/audio/cadd7108cf89a952f911.mp3",
       "text": "לָמֶד"
     },
     "מ": {
-      "url": "/audio/3321aa35e4cfa30716e6.mp3",
+      "url": "/audio/e20e477658900045df84.mp3",
       "text": "מֵם"
     },
     "ם": {
-      "url": "/audio/6dc78972573bf48513fa.mp3",
+      "url": "/audio/b1bf68fbf81cb1221916.mp3",
       "text": "מֵם סוֹפִית"
     },
     "מִ": {
-      "url": "/audio/2f82e54aa17e522e5e92.mp3",
+      "url": "/audio/f34629fd3233e49f32be.mp3",
       "text": "מִ"
     },
     "מֶ": {
-      "url": "/audio/591b0b5d302109f67a8c.mp3",
+      "url": "/audio/19307ae7c8d9a26f69e8.mp3",
       "text": "מֶ"
     },
     "מַ": {
-      "url": "/audio/7f7e3b2782de62871f50.mp3",
+      "url": "/audio/94b3a33ebf00eee9c24c.mp3",
       "text": "מַ"
     },
     "מֹ": {
-      "url": "/audio/80df0507c0537c4eeddd.mp3",
+      "url": "/audio/790077b831db16aa8606.mp3",
       "text": "מֹ"
     },
     "מָה אֲנִי צְרִיכָה": {
-      "url": "/audio/53448cdc3e63b6255144.mp3",
+      "url": "/audio/d4004594e05da63bf4a4.mp3",
       "text": "מָה אֲנִי צְרִיכָה"
     },
     "מָה אֲנִי קוֹרֵאת?": {
-      "url": "/audio/f4e6fd94edf5ecd6da46.mp3",
+      "url": "/audio/2916ebacd341b7d26ac8.mp3",
       "text": "מָה אֲנִי קוֹרֵאת?"
     },
     "מָה הַיְלָדָה קוֹרֵאת?": {
-      "url": "/audio/598e5d0d8e3f896296c7.mp3",
+      "url": "/audio/09e5e33b4409c9c7c1bf.mp3",
       "text": "מָה הַיְלָדָה קוֹרֵאת?"
     },
     "מָה עָגוֹל וְאָדֹם?": {
-      "url": "/audio/3de0aef32d5d5366ab50.mp3",
+      "url": "/audio/b4d387199ea83e275fdd.mp3",
       "text": "מָה עָגוֹל וְאָדֹם?"
     },
     "מָה צָהֹב וְאָרֹךְ?": {
-      "url": "/audio/a9caea22a1d626814e3c.mp3",
+      "url": "/audio/8ca32dd53cddd5103b33.mp3",
       "text": "מָה צָהֹב וְאָרֹךְ?"
     },
     "מָה שׁוֹתִים?": {
-      "url": "/audio/c2eccf719e1fc7dfa6d5.mp3",
+      "url": "/audio/4c503a3de4f7ddc663ba.mp3",
       "text": "מָה שׁוֹתִים?"
     },
     "מוּ": {
-      "url": "/audio/bdc5cbbff04a2953052d.mp3",
+      "url": "/audio/dcac5fc2494b29486168.mp3",
       "text": "מוּ"
     },
     "מִי אוֹמֵר הַב הַב?": {
-      "url": "/audio/8cf32208cd64c3b330d8.mp3",
+      "url": "/audio/4406d4e9af470c6fa8e0.mp3",
       "text": "מִי אוֹמֵר הַב הַב?"
     },
     "מִי אוֹמֵר מְיָאוּ?": {
-      "url": "/audio/0816a35e3817b1dedda3.mp3",
+      "url": "/audio/31d7a4a28688d194a0f4.mp3",
       "text": "מִי אוֹמֵר מְיָאוּ?"
     },
     "מִי עָף בַּשָּׁמַיִם?": {
-      "url": "/audio/3decd7b8e2f8f81fd9d9.mp3",
+      "url": "/audio/0a58018c0abf58f4e30d.mp3",
       "text": "מִי עָף בַּשָּׁמַיִם?"
     },
     "מִי שׂוֹחֶה בַּמַּיִם?": {
-      "url": "/audio/8b7af5812be245e92c23.mp3",
+      "url": "/audio/b196ddc2418062570f5c.mp3",
       "text": "מִי שׂוֹחֶה בַּמַּיִם?"
     },
     "מִלִּים טוֹבוֹת": {
-      "url": "/audio/f09ba64f703adc940219.mp3",
+      "url": "/audio/fc3dd719d3c32456b1b4.mp3",
       "text": "מִלִּים טוֹבוֹת"
     },
     "מֵם": {
-      "url": "/audio/3321aa35e4cfa30716e6.mp3",
+      "url": "/audio/e20e477658900045df84.mp3",
       "text": "מֵם"
     },
     "מֵם סוֹפִית": {
-      "url": "/audio/6dc78972573bf48513fa.mp3",
+      "url": "/audio/b1bf68fbf81cb1221916.mp3",
       "text": "מֵם סוֹפִית"
     },
     "מִצְאוּ אֶת הַלֶּחֶם שֶׁבַּסִּפּוּר.": {
-      "url": "/audio/c442fc2df438ab675da3.mp3",
+      "url": "/audio/840e19b92a41d86bd23a.mp3",
       "text": "מִצְאוּ אֶת הַלֶּחֶם שֶׁבַּסִּפּוּר."
     },
     "מִצְאוּ אֶת הַסּוּס שֶׁבַּסִּפּוּר.": {
-      "url": "/audio/58c4c73cfd186940d6ea.mp3",
+      "url": "/audio/67127b6b03a0f1e2d8a5.mp3",
       "text": "מִצְאוּ אֶת הַסּוּס שֶׁבַּסִּפּוּר."
     },
     "מִצְאוּ אֶת הַשֶּׁמֶשׁ שֶׁבַּסִּפּוּר.": {
-      "url": "/audio/133b2f8b9b079c8c0d38.mp3",
+      "url": "/audio/56cc970b07acd5e313db.mp3",
       "text": "מִצְאוּ אֶת הַשֶּׁמֶשׁ שֶׁבַּסִּפּוּר."
     },
     "מַקְשִׁיבִים בַּפִּיקְנִיק": {
-      "url": "/audio/401865847453b965b9be.mp3",
+      "url": "/audio/9e7dc3ebed319317c888.mp3",
       "text": "מַקְשִׁיבִים בַּפִּיקְנִיק"
     },
     "מַקְשִׁיבִים לְחַיּוֹת": {
-      "url": "/audio/2f6b9438efc9b7b2efb3.mp3",
+      "url": "/audio/72202a5f6a112714d849.mp3",
       "text": "מַקְשִׁיבִים לְחַיּוֹת"
     },
     "מַקְשִׁיבִים סְבִיבֵנוּ": {
-      "url": "/audio/86ae7d2b171bd0c8ccd5.mp3",
+      "url": "/audio/1a542409228425cbfb8a.mp3",
       "text": "מַקְשִׁיבִים סְבִיבֵנוּ"
     },
     "מִשְׁפָּטִים טְעִימִים": {
-      "url": "/audio/9e10d2f92cad9ab948df.mp3",
+      "url": "/audio/92d466a2f13545d7bb3e.mp3",
       "text": "מִשְׁפָּטִים טְעִימִים"
     },
     "מִשְׁפָּטִים רִאשׁוֹנִים": {
-      "url": "/audio/7f948ecfa92f5ac56c98.mp3",
+      "url": "/audio/5debe51fcb10e83477e2.mp3",
       "text": "מִשְׁפָּטִים רִאשׁוֹנִים"
     },
     "נ": {
-      "url": "/audio/e90d0a815442be2fc2c9.mp3",
+      "url": "/audio/006054b055a866b90b0b.mp3",
       "text": "נוּן"
     },
     "ן": {
-      "url": "/audio/5a210273fbaf3bb37a47.mp3",
+      "url": "/audio/c627a6b23d7e0f3765a4.mp3",
       "text": "נוּן סוֹפִית"
     },
     "נוּן": {
-      "url": "/audio/e90d0a815442be2fc2c9.mp3",
+      "url": "/audio/006054b055a866b90b0b.mp3",
       "text": "נוּן"
     },
     "נוּן סוֹפִית": {
-      "url": "/audio/5a210273fbaf3bb37a47.mp3",
+      "url": "/audio/c627a6b23d7e0f3765a4.mp3",
       "text": "נוּן סוֹפִית"
     },
     "ס": {
-      "url": "/audio/2a5d13220156040a8330.mp3",
+      "url": "/audio/6fc3e02e07f114ded8e3.mp3",
       "text": "סָמֶךְ"
     },
     "סְבִיבִי": {
-      "url": "/audio/75940549a72720e8ccb0.mp3",
+      "url": "/audio/0e4d09a955e77bf7547d.mp3",
       "text": "סְבִיבִי"
     },
     "סוס": {
-      "url": "/audio/8e9190598c8e24363ead.mp3",
+      "url": "/audio/1b5efa23ab2209fe4fcf.mp3",
       "text": "סוּס"
     },
     "סוּס": {
-      "url": "/audio/8e9190598c8e24363ead.mp3",
+      "url": "/audio/1b5efa23ab2209fe4fcf.mp3",
       "text": "סוּס"
     },
     "סְלִיחָה": {
-      "url": "/audio/3d2a097afeb76c224a60.mp3",
+      "url": "/audio/fb71fae026cc65efff67.mp3",
       "text": "סְלִיחָה"
     },
     "סָמֶךְ": {
-      "url": "/audio/2a5d13220156040a8330.mp3",
+      "url": "/audio/6fc3e02e07f114ded8e3.mp3",
       "text": "סָמֶךְ"
     },
     "ספר": {
-      "url": "/audio/36db08d33f9febd9c413.mp3",
+      "url": "/audio/5b66d924f7748d5ec48f.mp3",
       "text": "סֵפֶר"
     },
     "סֵפֶר": {
-      "url": "/audio/36db08d33f9febd9c413.mp3",
+      "url": "/audio/5b66d924f7748d5ec48f.mp3",
       "text": "סֵפֶר"
     },
     "ע": {
-      "url": "/audio/575774a683c5c07b142f.mp3",
+      "url": "/audio/4fcaf9ec8bb9742fe7a8.mp3",
       "text": "עַיִן"
     },
     "עוֹד אוֹתִיּוֹת": {
-      "url": "/audio/c6f8a53f4b039f86b2f7.mp3",
+      "url": "/audio/ae58f2d805b861856a0c.mp3",
       "text": "עוֹד אוֹתִיּוֹת"
     },
     "עֶזְרָה בְּבַקָּשָׁה": {
-      "url": "/audio/021e24e23e89263247c6.mp3",
+      "url": "/audio/75b3754ae408947766dd.mp3",
       "text": "עֶזְרָה בְּבַקָּשָׁה"
     },
     "עַיִן": {
-      "url": "/audio/575774a683c5c07b142f.mp3",
+      "url": "/audio/4fcaf9ec8bb9742fe7a8.mp3",
       "text": "עַיִן"
     },
     "עָשִׂינוּ טָעוּת. בּוֹאוּ נֹאמַר סְלִיחָה.": {
-      "url": "/audio/9220af9bf1048f9fbeae.mp3",
+      "url": "/audio/0b3b479e569865ae7fd8.mp3",
       "text": "עָשִׂינוּ טָעוּת. בּוֹאוּ נֹאמַר סְלִיחָה."
     },
     "פ": {
-      "url": "/audio/4619ac5aef88042d5332.mp3",
+      "url": "/audio/6e7c7d41345b646d774b.mp3",
       "text": "פֵּא"
     },
     "ף": {
-      "url": "/audio/2b5d43f2db34c985b634.mp3",
+      "url": "/audio/2f1868434684fe82e860.mp3",
       "text": "פֵּא סוֹפִית"
     },
     "פֵּא": {
-      "url": "/audio/4619ac5aef88042d5332.mp3",
+      "url": "/audio/6e7c7d41345b646d774b.mp3",
       "text": "פֵּא"
     },
     "פֵּא סוֹפִית": {
-      "url": "/audio/2b5d43f2db34c985b634.mp3",
+      "url": "/audio/2f1868434684fe82e860.mp3",
       "text": "פֵּא סוֹפִית"
     },
     "פָּגַשְׁנוּ חָבֵר. בּוֹאוּ נֹאמַר שָׁלוֹם.": {
-      "url": "/audio/5083e91d373c79e11e70.mp3",
+      "url": "/audio/9a8056fe05b3b240f675.mp3",
       "text": "פָּגַשְׁנוּ חָבֵר. בּוֹאוּ נֹאמַר שָׁלוֹם."
     },
     "פִּיקְנִיק טָעִים": {
-      "url": "/audio/61d16a0c6a3ef9ca329e.mp3",
+      "url": "/audio/9897b1e790128e6647e4.mp3",
       "text": "פִּיקְנִיק טָעִים"
     },
-    "פַּתָּח וְסֶגוֹל": {
-      "url": "/audio/03dc8cab8a1d701a715d.mp3",
-      "text": "פַּתָּח וְסֶגוֹל"
+    "פַּתָּח, קָמָץ, סֶגוֹל וְצֵירֵי": {
+      "url": "/audio/46a40a783676c047a1a8.mp3",
+      "text": "פַּתָּח, קָמָץ, סֶגוֹל וְצֵירֵי"
     },
     "צ": {
-      "url": "/audio/2fa3ddcc5bb5cb5f594f.mp3",
+      "url": "/audio/d1d885a98110111cc882.mp3",
       "text": "צָדִי"
     },
     "ץ": {
-      "url": "/audio/532601c784b53f11d592.mp3",
+      "url": "/audio/76bcb9a5f1d0e210b1ff.mp3",
       "text": "צָדִי סוֹפִית"
     },
     "צָדִי": {
-      "url": "/audio/2fa3ddcc5bb5cb5f594f.mp3",
+      "url": "/audio/d1d885a98110111cc882.mp3",
       "text": "צָדִי"
     },
     "צָדִי סוֹפִית": {
-      "url": "/audio/532601c784b53f11d592.mp3",
+      "url": "/audio/76bcb9a5f1d0e210b1ff.mp3",
       "text": "צָדִי סוֹפִית"
     },
     "צַיִד צְלִילִים": {
-      "url": "/audio/9463d7f2f542504380c6.mp3",
+      "url": "/audio/0ef379aa0043b2c93088.mp3",
       "text": "צַיִד צְלִילִים"
     },
     "ציפור": {
-      "url": "/audio/83462fb98276721fcc51.mp3",
+      "url": "/audio/ef99111d9821759d8086.mp3",
       "text": "צִפּוֹר"
     },
     "צִפּוֹר": {
-      "url": "/audio/83462fb98276721fcc51.mp3",
+      "url": "/audio/ef99111d9821759d8086.mp3",
       "text": "צִפּוֹר"
     },
     "צְרִיכִים עֶזְרָה? בּוֹאוּ נֹאמַר עֶזְרָה בְּבַקָּשָׁה.": {
-      "url": "/audio/4802409d2dfad93081d2.mp3",
+      "url": "/audio/3f96babbb33e6130c68d.mp3",
       "text": "צְרִיכִים עֶזְרָה? בּוֹאוּ נֹאמַר עֶזְרָה בְּבַקָּשָׁה."
     },
     "צְרִיכִים שֵׁרוּתִים? אֶפְשָׁר לִשְׁאֹל אֵיפֹה הַשֵּׁרוּתִים.": {
-      "url": "/audio/3f7ac26f2ac81bc03fb3.mp3",
+      "url": "/audio/494b2608d93260316fac.mp3",
       "text": "צְרִיכִים שֵׁרוּתִים? אֶפְשָׁר לִשְׁאֹל אֵיפֹה הַשֵּׁרוּתִים."
     },
     "ק": {
-      "url": "/audio/32c7daca3f7066d00026.mp3",
+      "url": "/audio/1c6aaaab33eb9d7ccba0.mp3",
       "text": "קוּף"
     },
+    "קֻבּוּץ, שׁוּרוּק וּשְׁוָא": {
+      "url": "/audio/499ffacfea6dd7d0e4cf.mp3",
+      "text": "קֻבּוּץ, שׁוּרוּק וּשְׁוָא"
+    },
     "קִבַּלְנוּ מַתָּנָה. בּוֹאוּ נֹאמַר תּוֹדָה.": {
-      "url": "/audio/a03b7fcb6bc1a007b87c.mp3",
+      "url": "/audio/9a97d472e15f4a693b0e.mp3",
       "text": "קִבַּלְנוּ מַתָּנָה. בּוֹאוּ נֹאמַר תּוֹדָה."
     },
     "קִבַּלְנוּ עֶזְרָה. בּוֹאוּ נֹאמַר תּוֹדָה.": {
-      "url": "/audio/8510aabeec753ee391d6.mp3",
+      "url": "/audio/ef2b1231692de82c22f4.mp3",
       "text": "קִבַּלְנוּ עֶזְרָה. בּוֹאוּ נֹאמַר תּוֹדָה."
     },
     "קוּף": {
-      "url": "/audio/32c7daca3f7066d00026.mp3",
+      "url": "/audio/1c6aaaab33eb9d7ccba0.mp3",
       "text": "קוּף"
     },
     "קוֹרֵא": {
-      "url": "/audio/56902c309818fcbde224.mp3",
+      "url": "/audio/dd6d7e4a8a14b75694d7.mp3",
       "text": "קוֹרֵא"
     },
     "קוֹרֵאת": {
-      "url": "/audio/ff08d3e0255c9a362ea1.mp3",
+      "url": "/audio/26a14674991ca0056661.mp3",
       "text": "קוֹרֵאת"
     },
     "ר": {
-      "url": "/audio/4a91b08249b30bc76150.mp3",
+      "url": "/audio/18daebeda9fab141871f.mp3",
       "text": "רֵישׁ"
     },
     "רוֹאֶה": {
-      "url": "/audio/c0f6087ccc32c16f883e.mp3",
+      "url": "/audio/717f14aef2671a00f9f9.mp3",
       "text": "רוֹאֶה"
     },
     "רוֹאָה": {
-      "url": "/audio/3741baaa7151a6650be1.mp3",
+      "url": "/audio/6c5e2145b1d2c83819d6.mp3",
       "text": "רוֹאָה"
     },
     "רוֹצִים לֶאֱכֹל? אֶפְשָׁר לוֹמַר אֲנִי רְעֵבָה.": {
-      "url": "/audio/6f53e3698875ee01a4f9.mp3",
+      "url": "/audio/d1791b844426e701c115.mp3",
       "text": "רוֹצִים לֶאֱכֹל? אֶפְשָׁר לוֹמַר אֲנִי רְעֵבָה."
     },
     "רוֹצִים לְבַקֵּשׁ מַשֶּׁהוּ? אוֹמְרִים בְּבַקָּשָׁה.": {
-      "url": "/audio/c1366e036bdd23db7c74.mp3",
+      "url": "/audio/5182a1b876977414804a.mp3",
       "text": "רוֹצִים לְבַקֵּשׁ מַשֶּׁהוּ? אוֹמְרִים בְּבַקָּשָׁה."
     },
     "רוֹצִים לִשְׁתּוֹת? אֶפְשָׁר לוֹמַר אֲנִי צְמֵאָה.": {
-      "url": "/audio/585935f60ba41e96cb85.mp3",
+      "url": "/audio/c823a69a7b6b6dfb8a4a.mp3",
       "text": "רוֹצִים לִשְׁתּוֹת? אֶפְשָׁר לוֹמַר אֲנִי צְמֵאָה."
     },
     "רֵישׁ": {
-      "url": "/audio/4a91b08249b30bc76150.mp3",
+      "url": "/audio/18daebeda9fab141871f.mp3",
       "text": "רֵישׁ"
     },
     "ש": {
-      "url": "/audio/b39da3cf9d2670d8c9f3.mp3",
+      "url": "/audio/a5e47a7fa1c55d57e58c.mp3",
       "text": "שִׁין"
     },
     "שִׁ": {
-      "url": "/audio/4a5af2eb930a71f49224.mp3",
+      "url": "/audio/856dfe1522364d16e95f.mp3",
       "text": "שִׁ"
     },
     "שָׁ": {
-      "url": "/audio/d1e29ea802bdbdf9d2cb.mp3",
+      "url": "/audio/8ebd9957a6785d215fcc.mp3",
       "text": "שָׁ"
     },
     "שׁוּ": {
-      "url": "/audio/a5eb7f004233f7c1ff94.mp3",
+      "url": "/audio/a5cb06c39563af4c58c1.mp3",
       "text": "שׁוּ"
     },
     "שׁוּק הַשִּׂיחָה": {
-      "url": "/audio/cd98947afac05cd4de5e.mp3",
+      "url": "/audio/724baa04444037ac3d31.mp3",
       "text": "שׁוּק הַשִּׂיחָה"
     },
-    "שׁוּרוּק וּשְׁוָא": {
-      "url": "/audio/d84841e9d5929c42ecc6.mp3",
-      "text": "שׁוּרוּק וּשְׁוָא"
-    },
     "שׁוֹתָה": {
-      "url": "/audio/029e9fc69e2940f19c8d.mp3",
+      "url": "/audio/736321da292c21c9a91e.mp3",
       "text": "שׁוֹתָה"
     },
     "שִׁין": {
-      "url": "/audio/b39da3cf9d2670d8c9f3.mp3",
+      "url": "/audio/a5e47a7fa1c55d57e58c.mp3",
       "text": "שִׁין"
     },
     "שָׁלוֹם": {
-      "url": "/audio/fbd410fa77d81cb39302.mp3",
+      "url": "/audio/f5bedaf262f10ff02630.mp3",
       "text": "שָׁלוֹם"
     },
     "שָׁלוֹם וּלְהִתְרָאוֹת": {
-      "url": "/audio/ae0df8084f8801691b86.mp3",
+      "url": "/audio/8261afce91d12a21b76d.mp3",
       "text": "שָׁלוֹם וּלְהִתְרָאוֹת"
     },
     "שְׁמַע": {
-      "url": "/audio/8c4a8c65db1da6f1a434.mp3",
+      "url": "/audio/b435398bf664d153e0b9.mp3",
       "text": "שְׁמַע"
     },
     "שִׁמַע": {
-      "url": "/audio/bb1b63868cd8a8ada900.mp3",
+      "url": "/audio/596ec8e971f1bfafcba8.mp3",
       "text": "שִׁמַע"
     },
     "שָׁמַע": {
-      "url": "/audio/444893d51dd271ad9efb.mp3",
+      "url": "/audio/3001baa4b0bcbaac2c50.mp3",
       "text": "שָׁמַע"
     },
     "שמש": {
-      "url": "/audio/8fd21c079ecc3e345034.mp3",
+      "url": "/audio/2d743c1b4c024c05f5b7.mp3",
       "text": "שֶׁמֶשׁ"
     },
     "שֶׁמֶשׁ": {
-      "url": "/audio/8fd21c079ecc3e345034.mp3",
+      "url": "/audio/2d743c1b4c024c05f5b7.mp3",
       "text": "שֶׁמֶשׁ"
     },
     "ת": {
-      "url": "/audio/be3c8b63ea1a1cd77f14.mp3",
+      "url": "/audio/5d9ec7e932b21bc32f0b.mp3",
       "text": "תָּו"
     },
     "תָּו": {
-      "url": "/audio/be3c8b63ea1a1cd77f14.mp3",
+      "url": "/audio/5d9ec7e932b21bc32f0b.mp3",
       "text": "תָּו"
     },
     "תּוֹדָה": {
-      "url": "/audio/23797a30f6170477b75b.mp3",
+      "url": "/audio/e8f8285feed65054d6bb.mp3",
       "text": "תּוֹדָה"
     },
     "תפוח": {
-      "url": "/audio/694500bf6847ed6875eb.mp3",
+      "url": "/audio/4866efe1db0502bd50b2.mp3",
       "text": "תַּפּוּחַ"
     },
     "תַּפּוּחַ": {
-      "url": "/audio/694500bf6847ed6875eb.mp3",
+      "url": "/audio/4866efe1db0502bd50b2.mp3",
       "text": "תַּפּוּחַ"
     }
   },
   "prompts": {
     "instruction-letter": {
-      "url": "/audio/29933b08a10587b24aae.mp3",
+      "url": "/audio/2999a3af3428a039e61a.mp3",
       "text": "הַקְשִׁיבוּ, וְגְּעוּ בָּאוֹת הַמַּתְאִימָה."
     },
     "instruction-picture": {
-      "url": "/audio/cda1c68ab74c3c2e9ce7.mp3",
+      "url": "/audio/19e4ca76788bda7fadd9.mp3",
       "text": "הַקְשִׁיבוּ לַמִּלָּה, וְגְּעוּ בַּתְּמוּנָה הַמַּתְאִימָה."
     },
     "instruction-listen": {
-      "url": "/audio/e7ffaa90cac93f631fac.mp3",
-      "text": "הַקְשִׁיבוּ הֵיטֵב, וּבִחֲרוּ אֶת הַתְּשׁוּבָה."
+      "url": "/audio/92aa493a8a01205e7a4b.mp3",
+      "text": "הַקְשִׁיבוּ הֵיטֵב, וּבַחֲרוּ אֶת הַתְּשׁוּבָה."
     },
     "instruction-build": {
-      "url": "/audio/18f5e48992cb8ceae14b.mp3",
+      "url": "/audio/026c3497bf5121172bc2.mp3",
       "text": "בּוֹאוּ נִבְנֶה מִלָּה. גְּעוּ בָּאוֹתִיּוֹת לְפִי הַסֵּדֶר, מִיָּמִין לִשְׂמֹאל."
     },
     "instruction-sentence": {
-      "url": "/audio/bdc20da159df2e5f8fa0.mp3",
+      "url": "/audio/8313d2b5b6077950f90f.mp3",
       "text": "בּוֹאוּ נִבְנֶה מִשְׁפָּט. גְּעוּ בַּמִּלִּים לְפִי הַסֵּדֶר, מִיָּמִין לִשְׂמֹאל."
     },
     "instruction-fill": {
-      "url": "/audio/ab847cbaed50fa21677d.mp3",
-      "text": "אֵיזוֹ מִלָּה חֲסֵרָה? הַקְשִׁיבוּ, וּבִחֲרוּ אֶת הַתְּשׁוּבָה."
+      "url": "/audio/fbe7982e6d1ffb1bd5d5.mp3",
+      "text": "אֵיזוֹ מִלָּה חֲסֵרָה? הַקְשִׁיבוּ, וּבַחֲרוּ אֶת הַתְּשׁוּבָה."
     },
     "instruction-sound": {
-      "url": "/audio/a030d2044656394e9dcb.mp3",
+      "url": "/audio/e575ec39c69a8d5528dd.mp3",
       "text": "הַקְשִׁיבוּ לַצְּלִיל, וְגְּעוּ בַּסִּימָן הַמַּתְאִים."
     },
     "instruction-story": {
-      "url": "/audio/854df97cca2defa70459.mp3",
-      "text": "הַקְשִׁיבוּ לַסִּפּוּר, וּבִחֲרוּ אֶת הַתְּמוּנָה הַמַּתְאִימָה."
+      "url": "/audio/58a1867ffc4f9aaf3818.mp3",
+      "text": "הַקְשִׁיבוּ לַסִּפּוּר, וּבַחֲרוּ אֶת הַתְּמוּנָה הַמַּתְאִימָה."
     },
     "instruction-phrase": {
-      "url": "/audio/2b2ce98b5e0e6153006b.mp3",
-      "text": "הַקְשִׁיבוּ, וּבִחֲרוּ אֶת הַמִּלִּים הַמַּתְאִימוֹת."
+      "url": "/audio/98e6d8d86fc1b014891b.mp3",
+      "text": "הַקְשִׁיבוּ, וּבַחֲרוּ אֶת הַמִּלִּים הַמַּתְאִימוֹת."
     },
     "correct": {
-      "url": "/audio/ec43a737f858b5ae071d.mp3",
-      "text": "כָּל הַכָּבוֹד! הִצְלַחְתֶּם!"
+      "url": "/audio/49c9edd7a4862a55454d.mp3",
+      "text": "כֹּל הַכָּבוֹד! הִצְלַחְתֶּם!"
     },
     "try-again": {
-      "url": "/audio/1df6c8126f876228ea50.mp3",
+      "url": "/audio/132815623bc4dad81915.mp3",
       "text": "בּוֹאוּ נְנַסֶּה שׁוּב. הַקְשִׁיבוּ וְגְּעוּ בַּתְּשׁוּבָה."
     }
   }

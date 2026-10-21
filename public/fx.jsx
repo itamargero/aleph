@@ -9,11 +9,11 @@ window.HH_SOUND = { sfx: true, voice: true };
 // A persistent AudioContext, resumed directly inside a tap, lets subsequent
 // instructions play on iOS. Fetch/decode happen only after this synchronous unlock.
 let _ac = null;
-let _resumeAudio = Promise.resolve(false);
 let _voiceManifest = null;
 let _voiceGeneration = 0;
 let _voiceSource = null;
 let _finishVoice = null;
+let _lastVoice = null;
 const _decodedVoice = new Map();
 window.HH_AUDIO = { status: 'locked', error: '', text: '' };
 
@@ -22,11 +22,22 @@ function audioState(status, error = '', text = '') {
   window.dispatchEvent(new CustomEvent('hh-audio', { detail: window.HH_AUDIO }));
 }
 function ac() {
-  if (!_ac) {
+  if (!_ac || _ac.state === 'closed') {
     try {
       const Context = window.AudioContext || window.webkitAudioContext;
       if (!Context) throw new Error('Audio playback is not available in this browser.');
       _ac = new Context();
+      const context = _ac;
+      // Safari can interrupt audio when the app is backgrounded or an output
+      // changes. Settle the active request so speakers never remain stuck.
+      context.onstatechange = () => {
+        if (context !== _ac || context.state === 'running') return;
+        const text = window.HH_AUDIO.text;
+        // A queued suspension event can arrive while a NEW request is resuming.
+        // Cancel only existing playback/downloads, not that fresh speaker tap.
+        if (_voiceSource || window.HH_AUDIO.status === 'loading') stopVoice();
+        audioState('locked', 'Tap the speaker to resume sound.', text);
+      };
     } catch (error) { audioState('error', error.message); }
   }
   return _ac;
@@ -34,23 +45,30 @@ function ac() {
 function unlockAudio() {
   const context = ac();
   if (!context) return Promise.resolve(false);
-  // Call resume and start a silent frame before any await or network request.
+  if (context.state === 'running') return Promise.resolve(true);
+  // Each tap must call native resume again, even if a prior non-gesture
+  // attempt is still pending (touch activation can arrive after pointerdown).
+  // Resume and start a silent frame synchronously in the user gesture. Native
+  // resume can stay pending under autoplay restrictions; allow a fresh retry.
+  let timer;
   try {
-    const resume = context.state === 'running' ? Promise.resolve() : context.resume();
+    const resume = context.resume();
     const silent = context.createBufferSource();
     silent.buffer = context.createBuffer(1, 1, context.sampleRate);
     silent.connect(context.destination);
     silent.start();
-    _resumeAudio = Promise.resolve(resume).then(() => {
-      if (context.state !== 'running') {
-        audioState('locked', 'Tap the speaker to turn on sound.');
-        return false;
-      }
+    return Promise.race([
+      resume,
+      new Promise((_, reject) => { timer = setTimeout(() => reject(new Error('Tap the speaker to turn on sound.')), 3000); }),
+    ]).then(() => {
+      if (context.state !== 'running') throw new Error('Tap the speaker to turn on sound.');
       if (!['playing', 'loading'].includes(window.HH_AUDIO.status)) audioState('ready');
       return true;
-    }).catch(error => { audioState('error', error.message); return false; });
-    return _resumeAudio;
-  } catch (error) { audioState('error', error.message); return Promise.resolve(false); }
+    }).catch(error => {
+      if (context === _ac && context.state !== 'running') audioState('locked', error.message, window.HH_AUDIO.text);
+      return false;
+    }).finally(() => { clearTimeout(timer); });
+  } catch (error) { audioState('locked', error.message, window.HH_AUDIO.text); return Promise.resolve(false); }
 }
 function stopVoice() {
   _voiceGeneration += 1;
@@ -63,18 +81,19 @@ function stopVoice() {
   if (['playing', 'loading'].includes(window.HH_AUDIO.status)) audioState(_ac?.state === 'running' ? 'ready' : 'locked');
 }
 function normalizedSpeech(text) { return String(text || '').normalize('NFC').trim().replace(/\s+/g, ' '); }
-async function fetchVoiceAsset(url) {
+async function fetchVoiceAsset(url, format) {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 15000);
   try {
     const response = await fetch(url, { signal: controller.signal });
     if (!response.ok) throw new Error(`Audio file could not load (${response.status}).`);
-    return response;
+    // Keep the abort deadline active until the complete body has arrived.
+    return await (format === 'json' ? response.json() : response.arrayBuffer());
   } finally { clearTimeout(timeout); }
 }
 async function loadVoiceManifest() {
   if (!_voiceManifest) {
-    _voiceManifest = fetchVoiceAsset('/audio/manifest.json').then(response => response.json()).catch(error => {
+    _voiceManifest = fetchVoiceAsset('/audio/manifest.json', 'json').catch(error => {
       _voiceManifest = null;
       throw error;
     });
@@ -82,14 +101,17 @@ async function loadVoiceManifest() {
   return _voiceManifest;
 }
 async function playBundledVoice(text, prompt = false) {
+  _lastVoice = { text, prompt };
   stopVoice();
   const generation = _voiceGeneration;
   if (!window.HH_SOUND.voice) { audioState('muted'); return false; }
   const context = ac();
   if (!context) return false;
-  await _resumeAudio;
+  // This entry point must unlock itself while still inside the speaker tap;
+  // a prior page-level pointer handler may have run before an interruption.
+  const resumed = await unlockAudio();
   if (generation !== _voiceGeneration) return false;
-  if (context.state !== 'running') {
+  if (!resumed || context.state !== 'running') {
     audioState('locked', 'Tap the speaker to turn on sound.', text);
     return false;
   }
@@ -100,8 +122,8 @@ async function playBundledVoice(text, prompt = false) {
     if (!record) throw new Error('This recording is missing. Connect to the internet and retry the offline download.');
     let buffer = _decodedVoice.get(record.url);
     if (!buffer) {
-      const response = await fetchVoiceAsset(record.url);
-      buffer = await context.decodeAudioData(await response.arrayBuffer());
+      const bytes = await fetchVoiceAsset(record.url);
+      buffer = await context.decodeAudioData(bytes);
       _decodedVoice.set(record.url, buffer);
     }
     if (generation !== _voiceGeneration) return false;
@@ -116,6 +138,8 @@ async function playBundledVoice(text, prompt = false) {
         if (generation !== _voiceGeneration) return;
         _voiceSource = null;
         _finishVoice = null;
+        // A later idle suspension must not replay praise from an old activity.
+        _lastVoice = null;
         audioState('ready');
         resolve(true);
       };
@@ -123,9 +147,15 @@ async function playBundledVoice(text, prompt = false) {
       source.start();
     });
   } catch (error) {
-    if (generation === _voiceGeneration) audioState('error', error.message || 'Sound could not play. Tap the speaker to try again.', text);
+    if (generation === _voiceGeneration) {
+      stopVoice();
+      audioState('error', error.message || 'Sound could not play. Tap the speaker to try again.', text);
+    }
     return false;
   }
+}
+function retryVoice() {
+  return _lastVoice ? playBundledVoice(_lastVoice.text, _lastVoice.prompt) : unlockAudio();
 }
 function speakHe(text) { return playBundledVoice(normalizedSpeech(text)); }
 function playPrompt(key) { return playBundledVoice(key, true); }
@@ -145,7 +175,7 @@ function tone(freq, t0, dur, type = 'sine', gain = 0.18) {
 function chime(kind) {
   if (!window.HH_SOUND.sfx) return;
   const c = ac(); if (!c) return;
-  if (c.state === 'suspended') unlockAudio();
+  if (c.state !== 'running') unlockAudio();
   if (kind === 'correct') { tone(660,0,.14,'triangle'); tone(880,.10,.18,'triangle'); tone(1175,.20,.30,'triangle'); }
   else if (kind === 'wrong') { tone(300,0,.16,'sine',.12); tone(240,.12,.22,'sine',.12); }
   else if (kind === 'coin') { tone(990,0,.08,'square',.08); tone(1320,.07,.14,'square',.08); }
@@ -193,4 +223,4 @@ if (!document.getElementById('confetti-kf')) {
   document.head.appendChild(s);
 }
 
-Object.assign(window, { speakHe, playPrompt, stopVoice, stopSpeech: stopVoice, unlockAudio, chime, Confetti });
+Object.assign(window, { speakHe, playPrompt, retryVoice, stopVoice, stopSpeech: stopVoice, unlockAudio, chime, Confetti });

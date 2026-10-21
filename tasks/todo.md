@@ -33,3 +33,43 @@ Complete all eight worlds using supported exercise types, visual story scenes, v
 - Apple Safari requires a user gesture to start audio; use a persistent Web Audio context unlocked by play/speaker taps. Local recordings avoid dependence on an installed speech voice.
 - WebKit can evict unused website storage; request persistence and give parents a concrete preflight reopen/speaker check. Prepare the Home Screen app separately because its storage may differ from Safari.
 - Keep the existing source engine and build locally rather than introduce a new backend or speech service. Upgrade the small Next.js shell to 16 and remove browser Babel/CDNs.
+
+
+# Web audio and Hebrew pronunciation repair
+
+- [x] Preserve the original checkout and establish a clean current-main baseline (27 tests pass).
+- [x] Reproduce audio recovery failures and identify the failed playback boundary (fresh deployed profiles played; suspended/closed contexts exposed recovery defects).
+- [x] Verify Hila neural Hebrew; compare Israwave samples; user selected Hila. Correct vowel models and labels.
+- [x] Add regression coverage, repair playback, and regenerate all 171 bundled recordings.
+- [x] Verify Chromium, WebKit, offline playback, lint, types, production build, and review.
+
+## Approach
+
+Keep committed recordings and offline support. Trace audible sample data and browser playback separately. Replace the generation voice only after proving it produces usable Hebrew recordings. Preserve progress and curriculum access.
+
+## Review
+
+- 50 Vitest checks, ESLint, TypeScript, production build, and diff validation pass.
+- Chromium and mobile WebKit decode all 171 Hila recordings with nonzero signal; recorded words/instructions and offline cold reload/playback work with all 184 assets ready.
+- Reproduced and repaired closed/suspended context recovery, pending activation retry, queued state-change cancellation, retry gesture ordering, stale muted status, and praise truncation. Automatic narration yields to child interactions.
+- CodeRabbit initial review completed with one minor missing-tool diagnostic; fixed by checking ffmpeg/ffprobe before synthesis, with regression coverage.
+- Final browser verification: 13/13 checks pass in Chrome and mobile WebKit (26 total), with zero page/console errors or failed requests. A correct answer 4.3 ms after Start preserves the complete praise recording; the recording ends naturally after about 4.345 seconds before advancement. Exiting during praise leaves the level list and saved progress unchanged.
+- Consolidated local browser evidence: `output/playwright/hila-browser-verification-summary.json`. Final runtime: `4d1a6a8d10588c353459` (184 resources, 3.44 MiB).
+- Committed CodeRabbit review completed with two minor findings and no blockers. Fixed completed clips being replayed after idle suspension; focused browser checks verify interrupted speech retries fully while idle resume starts no stale clip. The other finding concerns provisioning ffmpeg/ffprobe for tests: these are documented development prerequisites, intentionally required for actual audio validation; this repository has no separate CI test environment to provision.
+- Vercel preview is Ready for PR #3. Authenticated inspection confirms Hila and all 171 referenced clips. The original checkout's lockfile edit is preserved; production has not been changed.
+
+## Pronunciation follow-up: kol hakavod
+
+- [x] Trace the reported kal/kol error to the recorded praise synthesis input.
+- [x] Compare Hila recordings with explicit /o/ vowel inputs against the existing /a/ recording and Israwave phonemes.
+- [x] Add a pronunciation-specific regression, keep canonical lesson spelling separate from synthesis hints, and regenerate affected clips.
+- [ ] Verify playback, full checks, code review, and update PR #3 preview.
+
+The previous waveform checks established audible playback, not correct Hebrew vowels. This follow-up validates the reported vowel contrast directly.
+
+### Pronunciation follow-up evidence
+
+- Original praise matches the explicit kal reference over the first word (PCM cosine 1.0). The regenerated speech-only כֹּל sample closely matches the explicit /o/ reference (first-word cosine 0.953); its vowel formants differ from the original /a/ sample.
+- All 171 synthesis inputs audited. Corrected the plural imperative vowel in four choose prompts. The comparison found five affected recordings; the 166 other recordings and browser JavaScript remain byte-identical.
+- 53 tests, lint, TypeScript, production build, and diff validation pass. Manifest canonical aliases remain valid, and the five regenerated clips use new URLs. Runtime `526d6fef5139967a86d8`.
+- The user explicitly requested merging to production for their child to play. Production deployment verification follows the merge.
