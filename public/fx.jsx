@@ -138,6 +138,8 @@ async function playBundledVoice(text, prompt = false) {
         if (generation !== _voiceGeneration) return;
         _voiceSource = null;
         _finishVoice = null;
+        // A later idle suspension must not replay praise from an old activity.
+        _lastVoice = null;
         audioState('ready');
         resolve(true);
       };

@@ -41,7 +41,7 @@ Complete all eight worlds using supported exercise types, visual story scenes, v
 - [x] Reproduce audio recovery failures and identify the failed playback boundary (fresh deployed profiles played; suspended/closed contexts exposed recovery defects).
 - [x] Verify Hila neural Hebrew; compare Israwave samples; user selected Hila. Correct vowel models and labels.
 - [x] Add regression coverage, repair playback, and regenerate all 171 bundled recordings.
-- [ ] Verify Chromium, WebKit, offline playback, lint, types, production build, and review.
+- [x] Verify Chromium, WebKit, offline playback, lint, types, production build, and review.
 
 ## Approach
 
@@ -49,8 +49,11 @@ Keep committed recordings and offline support. Trace audible sample data and bro
 
 ## Review
 
-- 49 Vitest checks, ESLint, TypeScript, production build, and diff validation pass.
+- 50 Vitest checks, ESLint, TypeScript, production build, and diff validation pass.
 - Chromium and mobile WebKit decode all 171 Hila recordings with nonzero signal; recorded words/instructions and offline cold reload/playback work with all 184 assets ready.
 - Reproduced and repaired closed/suspended context recovery, pending activation retry, queued state-change cancellation, retry gesture ordering, stale muted status, and praise truncation. Automatic narration yields to child interactions.
 - CodeRabbit initial review completed with one minor missing-tool diagnostic; fixed by checking ffmpeg/ffprobe before synthesis, with regression coverage.
-- Final focused browser regression and committed review pending. The original checkout's lockfile edit is preserved; production has not been changed.
+- Final browser verification: 13/13 checks pass in Chrome and mobile WebKit (26 total), with zero page/console errors or failed requests. A correct answer 4.3 ms after Start preserves the complete praise recording; the recording ends naturally after about 4.345 seconds before advancement. Exiting during praise leaves the level list and saved progress unchanged.
+- Consolidated local browser evidence: `output/playwright/hila-browser-verification-summary.json`. Final runtime: `4d1a6a8d10588c353459` (184 resources, 3.44 MiB).
+- Committed CodeRabbit review completed with two minor findings and no blockers. Fixed completed clips being replayed after idle suspension; focused browser checks verify interrupted speech retries fully while idle resume starts no stale clip. The other finding concerns provisioning ffmpeg/ffprobe for tests: these are documented development prerequisites, intentionally required for actual audio validation; this repository has no separate CI test environment to provision.
+- Vercel preview is Ready for PR #3. Authenticated inspection confirms Hila and all 171 referenced clips. The original checkout's lockfile edit is preserved; production has not been changed.

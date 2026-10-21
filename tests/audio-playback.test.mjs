@@ -7,7 +7,7 @@ const { code } = await transform(await readFile(new URL('../public/fx.jsx', impo
 
 // Model native Web Audio state transitions; decoding and rendering are also
 // exercised in Chromium/WebKit against the real committed recordings.
-function player({ state = 'suspended', resumeStalls = false, resumeFirstStalls = false, resumeSuspensionEvent = false, bodyStalls = false, finishAutomatically = true } = {}) {
+function player({ state = 'suspended', resumeStalls = false, resumeFirstStalls = false, resumeSuspensionEvent = false, bodyStalls = false, bodyFailsOnce = false, finishAutomatically = true } = {}) {
   const contexts = [];
   const started = [];
   class AudioContext {
@@ -33,6 +33,7 @@ function player({ state = 'suspended', resumeStalls = false, resumeFirstStalls =
   const document = { getElementById: () => true };
   const fetch = (_url, { signal } = {}) => {
     if (_url.endsWith('.json')) return Promise.resolve({ ok: true, json: async () => ({ entries: { 'אָלֶף': { text: 'אָלֶף', url: '/audio/alef.mp3' } }, prompts: { instruction: { text: 'אָלֶף', url: '/audio/alef.mp3' } } }) });
+    if (bodyFailsOnce) { bodyFailsOnce = false; return Promise.reject(new Error('Connection interrupted.')); }
     return Promise.resolve({ ok: true, arrayBuffer: () => bodyStalls
       ? new Promise((_resolve, reject) => signal.addEventListener('abort', () => reject(new Error('Download timed out.'))))
       : Promise.resolve(new ArrayBuffer(4)) });
@@ -105,10 +106,20 @@ describe('Hebrew playback recovery', () => {
   });
 
   test('retry replays the failed instruction instead of merely unlocking audio', async () => {
-    const { window, started } = player();
-    await window.playPrompt('instruction');
+    const { window, started } = player({ bodyFailsOnce: true });
+    expect(await window.playPrompt('instruction')).toBe(false);
+    expect(window.HH_AUDIO.status).toBe('error');
     expect(await window.retryVoice()).toBe(true);
-    expect(started).toHaveLength(2);
+    expect(started).toHaveLength(1);
+  });
+
+  test('an idle suspension does not replay a completed clip from a previous screen', async () => {
+    const { window, contexts, started } = player();
+    expect(await window.speakHe('אָלֶף')).toBe(true);
+    contexts[0].state = 'suspended';
+    contexts[0].onstatechange();
+    expect(await window.retryVoice()).toBe(true);
+    expect(started).toHaveLength(1);
   });
 
   test('background interruption settles the active speaker and allows another tap', async () => {
