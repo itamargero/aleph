@@ -57,3 +57,19 @@ Keep committed recordings and offline support. Trace audible sample data and bro
 - Consolidated local browser evidence: `output/playwright/hila-browser-verification-summary.json`. Final runtime: `4d1a6a8d10588c353459` (184 resources, 3.44 MiB).
 - Committed CodeRabbit review completed with two minor findings and no blockers. Fixed completed clips being replayed after idle suspension; focused browser checks verify interrupted speech retries fully while idle resume starts no stale clip. The other finding concerns provisioning ffmpeg/ffprobe for tests: these are documented development prerequisites, intentionally required for actual audio validation; this repository has no separate CI test environment to provision.
 - Vercel preview is Ready for PR #3. Authenticated inspection confirms Hila and all 171 referenced clips. The original checkout's lockfile edit is preserved; production has not been changed.
+
+## Pronunciation follow-up: kol hakavod
+
+- [x] Trace the reported kal/kol error to the recorded praise synthesis input.
+- [x] Compare Hila recordings with explicit /o/ vowel inputs against the existing /a/ recording and Israwave phonemes.
+- [x] Add a pronunciation-specific regression, keep canonical lesson spelling separate from synthesis hints, and regenerate affected clips.
+- [ ] Verify playback, full checks, code review, and update PR #3 preview.
+
+The previous waveform checks established audible playback, not correct Hebrew vowels. This follow-up validates the reported vowel contrast directly.
+
+### Pronunciation follow-up evidence
+
+- Original praise matches the explicit kal reference over the first word (PCM cosine 1.0). The regenerated speech-only כֹּל sample closely matches the explicit /o/ reference (first-word cosine 0.953); its vowel formants differ from the original /a/ sample.
+- All 171 synthesis inputs audited. Corrected the plural imperative vowel in four choose prompts. The comparison found five affected recordings; the 166 other recordings and browser JavaScript remain byte-identical.
+- 53 tests, lint, TypeScript, production build, and diff validation pass. Manifest canonical aliases remain valid, and the five regenerated clips use new URLs. Runtime `526d6fef5139967a86d8`.
+- The user explicitly requested merging to production for their child to play. Production deployment verification follows the merge.

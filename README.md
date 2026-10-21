@@ -32,7 +32,7 @@ npm start
 
 The build hashes the complete runtime resource list and generates a service worker. A new worker activates when the previous app is closed, avoiding changes in the middle of a lesson. The old complete cache remains available if a new download fails. Offline readiness is checked against the complete resource list.
 
-Hebrew recordings are committed assets so Vercel builds and offline playback require no speech service or installed browser voice. The recording generator uses Microsoft's female Israeli Hebrew `he-IL-HilaNeural` voice through [edge-tts](https://github.com/rany2/edge-tts), at a slightly slower learning pace. The original Carmit recordings have been replaced. Curated vowel marks are retained, and letter glyphs resolve to their Hebrew names.
+Hebrew recordings are committed assets so Vercel builds and offline playback require no speech service or installed browser voice. The recording generator uses Microsoft's female Israeli Hebrew `he-IL-HilaNeural` voice through [edge-tts](https://github.com/rany2/edge-tts), at a slightly slower learning pace. The original Carmit recordings have been replaced. Canonical lesson spelling and lookup keys are retained, and letter glyphs resolve to their Hebrew names. Build-time pronunciation hints disambiguate known cases such as כָּל (spoken as kol via כֹּל) without changing the displayed text.
 
 After changing spoken curriculum content, install Python 3.9+ and ffmpeg, then generate the clips (internet access is needed only for this step):
 

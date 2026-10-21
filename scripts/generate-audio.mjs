@@ -12,16 +12,26 @@ import vm from 'node:vm';
 
 const execute = promisify(execFile);
 export const normalizeSpeech = text => String(text || '').normalize('NFC').trim().replace(/\s+/g, ' ');
+// Keep standard Hebrew spelling in curriculum/lookup keys. Hila treats the
+// ambiguous qamatz in כָּל as /a/ even here, so feed an explicit /o/ only to TTS.
+// Match complete words; never change every qamatz (most correctly mean /a/).
+const SPEECH_WORD_OVERRIDES = new Map([
+  [normalizeSpeech('כָּל'), normalizeSpeech('כֹּל')],
+]);
+export function speechText(text) {
+  return normalizeSpeech(text).replace(/[\p{L}\p{M}]+/gu, word => SPEECH_WORD_OVERRIDES.get(word) || word);
+}
+
 export const AUDIO_PROMPTS = {
   'instruction-letter': 'הַקְשִׁיבוּ, וְגְּעוּ בָּאוֹת הַמַּתְאִימָה.',
   'instruction-picture': 'הַקְשִׁיבוּ לַמִּלָּה, וְגְּעוּ בַּתְּמוּנָה הַמַּתְאִימָה.',
-  'instruction-listen': 'הַקְשִׁיבוּ הֵיטֵב, וּבִחֲרוּ אֶת הַתְּשׁוּבָה.',
+  'instruction-listen': 'הַקְשִׁיבוּ הֵיטֵב, וּבַחֲרוּ אֶת הַתְּשׁוּבָה.',
   'instruction-build': 'בּוֹאוּ נִבְנֶה מִלָּה. גְּעוּ בָּאוֹתִיּוֹת לְפִי הַסֵּדֶר, מִיָּמִין לִשְׂמֹאל.',
   'instruction-sentence': 'בּוֹאוּ נִבְנֶה מִשְׁפָּט. גְּעוּ בַּמִּלִּים לְפִי הַסֵּדֶר, מִיָּמִין לִשְׂמֹאל.',
-  'instruction-fill': 'אֵיזוֹ מִלָּה חֲסֵרָה? הַקְשִׁיבוּ, וּבִחֲרוּ אֶת הַתְּשׁוּבָה.',
+  'instruction-fill': 'אֵיזוֹ מִלָּה חֲסֵרָה? הַקְשִׁיבוּ, וּבַחֲרוּ אֶת הַתְּשׁוּבָה.',
   'instruction-sound': 'הַקְשִׁיבוּ לַצְּלִיל, וְגְּעוּ בַּסִּימָן הַמַּתְאִים.',
-  'instruction-story': 'הַקְשִׁיבוּ לַסִּפּוּר, וּבִחֲרוּ אֶת הַתְּמוּנָה הַמַּתְאִימָה.',
-  'instruction-phrase': 'הַקְשִׁיבוּ, וּבִחֲרוּ אֶת הַמִּלִּים הַמַּתְאִימוֹת.',
+  'instruction-story': 'הַקְשִׁיבוּ לַסִּפּוּר, וּבַחֲרוּ אֶת הַתְּמוּנָה הַמַּתְאִימָה.',
+  'instruction-phrase': 'הַקְשִׁיבוּ, וּבַחֲרוּ אֶת הַמִּלִּים הַמַּתְאִימוֹת.',
   'correct': 'כָּל הַכָּבוֹד! הִצְלַחְתֶּם!',
   'try-again': 'בּוֹאוּ נְנַסֶּה שׁוּב. הַקְשִׁיבוּ וְגְּעוּ בַּתְּשׁוּבָה.',
 };
@@ -48,7 +58,7 @@ export function collectSpeech(curriculum) {
   const metadataFields = new Set(['objective', 'title', 'name', 'blurb', 'en', 'label']);
   const add = (text, spoken = text) => {
     const key = normalizeSpeech(text);
-    if (/[\u0590-\u05ff]/u.test(key)) entries.set(key, normalizeSpeech(spoken));
+    if (/[\u0590-\u05ff]/u.test(key)) entries.set(key, speechText(spoken));
   };
   const visit = value => {
     if (typeof value === 'string') add(value);
@@ -147,7 +157,7 @@ export async function generate({ root = resolve(fileURLToPath(new URL('..', impo
     }
     const record = text => ({ url: '/audio/' + audioId(text) + '.mp3', text });
     const entries = Object.fromEntries([...speech].sort(([a], [b]) => a.localeCompare(b, 'he')).map(([key, text]) => [key, record(text)]));
-    const prompts = Object.fromEntries(Object.entries(AUDIO_PROMPTS).map(([key, text]) => [key, record(normalizeSpeech(text))]));
+    const prompts = Object.fromEntries(Object.entries(AUDIO_PROMPTS).map(([key, text]) => [key, record(speechText(text))]));
     const manifest = {
       ...AUDIO_CONFIG,
       provenance: {

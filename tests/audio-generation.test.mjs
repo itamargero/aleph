@@ -9,6 +9,27 @@ import * as audio from '../scripts/generate-audio.mjs';
 const execute = promisify(execFile);
 
 describe('offline Hebrew recording generation', () => {
+  test('praise synthesizes kol without changing the canonical lesson spelling', () => {
+    const canonical = 'כָּל הַכָּבוֹד! הִצְלַחְתֶּם!';
+    const spoken = 'כֹּל הַכָּבוֹד! הִצְלַחְתֶּם!';
+    expect(audio.AUDIO_PROMPTS.correct).toBe(canonical);
+    expect(audio.speechText(canonical)).toBe(spoken);
+    expect(audio.normalizeSpeech(canonical)).toBe(canonical);
+    expect(audio.collectSpeech({ lesson: canonical }).get(canonical)).toBe(spoken);
+  });
+
+  test('the pronunciation hint matches whole words and leaves other a vowels alone', () => {
+    expect(audio.speechText('כָּל, כָּבוֹד. בָּ. מַ. כַּל.')).toBe('כֹּל, כָּבוֹד. בָּ. מַ. כַּל.');
+    expect(audio.speechText('כָּל הַכָּבוֹד')).toBe('כֹּל הַכָּבוֹד');
+  });
+
+  test('choose instructions use the imperative vacharu rather than vicharu', () => {
+    for (const key of ['instruction-listen', 'instruction-fill', 'instruction-story', 'instruction-phrase']) {
+      expect(audio.AUDIO_PROMPTS[key], key).toContain('וּבַחֲרוּ');
+      expect(audio.AUDIO_PROMPTS[key], key).not.toContain('וּבִחֲרוּ');
+    }
+  });
+
   test('uses the verified native Hebrew neural voice with a measured learning pace', () => {
     expect(audio.AUDIO_CONFIG).toMatchObject({ engine: 'edge-tts', voice: 'he-IL-HilaNeural', rate: '-15%' });
   });

@@ -32,7 +32,7 @@ describe('bundled Hebrew voice for every activity', () => {
     expect(Object.keys(manifest.entries).some(text => /[A-Za-z]/.test(text))).toBe(false);
   });
 
-  test('every curriculum utterance has the intended pronunciation and a nonempty committed MP3', async () => {
+  test('every curriculum utterance has the intended synthesis input and a nonempty committed MP3', async () => {
     const required = collectSpeech(curriculum);
     const checkedUrls = new Set();
     for (const [text, spoken] of required) {
