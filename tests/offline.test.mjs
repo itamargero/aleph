@@ -108,6 +108,13 @@ describe('complete offline game cache', () => {
     expect(worker.stores.get(worker.currentCache()).has(audio.url)).toBe(true);
   });
 
+  test('the recovery page and script always bypass the game cache', async () => {
+    await worker.invoke('install');
+    expect(await worker.request('/reset-offline.html')).toBeUndefined();
+    expect(await worker.request('/reset-offline.html?check=123')).toBeUndefined();
+    expect(await worker.request('/reset-offline.js')).toBeUndefined();
+  });
+
   test('root opens the static game offline and audio accepts iPad byte range requests', async () => {
     await worker.invoke('install');
     const root = await worker.request('/', {}, 'navigate');

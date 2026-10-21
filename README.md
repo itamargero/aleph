@@ -13,6 +13,12 @@ All eight worlds and 25 lessons are available from the start. The big play butto
 
 Tap a play button to enable sound on Safari. Progress is saved on the same device. Clearing website data removes the download and saved stars. Parent settings include download retry, sound and movement controls, and a guarded progress reset.
 
+## Refresh an old airplane download
+
+While online, open **Parent settings → Reset airplane download**, then tap the reset button. The reset removes this game's downloaded files and service worker while keeping saved stars, coins, stickers, and sound settings. Close other game tabs, open the latest game, and wait for **Ready for airplane** before going offline.
+
+If the old installed version does not have the reset button, open [the recovery page](https://aleph-two.vercel.app/reset-offline.html) directly on the phone. If Safari and the Home Screen app have separate storage, use the reset from the installed app's settings too after it updates. A failed network check leaves the existing download intact; connect to Wi-Fi or mobile data and retry. Avoid clearing all Safari website data, which also removes progress.
+
 ## Development
 
 ```sh
